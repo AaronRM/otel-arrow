@@ -47,25 +47,26 @@
 //!
 //! # Retry Behavior and Error Handling
 //!
-//! On NACK from downstream, bundles are retried with exponential backoff until
-//! either delivery succeeds or the data is evicted by the configured retention
-//! policy (`retention_size_cap` + `drop_oldest`).
+//! On NACK from downstream, bundles are handled based on the NACK's `permanent` status:
 //!
-//! There is no `max_retries` limit: without machine-readable error classification
-//! in NACKs, we cannot distinguish temporary failures (network outage—retry will
-//! succeed) from permanent failures (malformed data—retry is futile). A retry
-//! limit would cause **data loss** during legitimate extended outages.
+//! - **Permanent NACKs** (e.g., malformed data, schema validation failures): The bundle
+//!   is immediately rejected via `handle.reject()` and will not be retried. Monitor the
+//!   `bundles_rejected_permanent` metric to detect data being dropped due to permanent failures.
+//!
+//! - **Transient NACKs** (e.g., network issues, temporary downstream unavailability): Bundles
+//!   are retried with exponential backoff until either delivery succeeds or the data is evicted
+//!   by the configured retention policy (`retention_size_cap` + `drop_oldest`).
+//!
+//! There is no `max_retries` limit for transient failures: a retry limit would cause
+//! **data loss** during legitimate extended outages.
 //!
 //! **Operational guidance:**
 //!
+//! - Monitor `bundles_rejected_permanent` metric to detect permanent failures (data loss)
 //! - Monitor `retries_scheduled` metric to detect persistently failing data
 //! - Use `retention_size_cap` to bound storage; `drop_oldest` policy evicts
 //!   stuck data when space is needed for new data
 //! - `max_in_flight` limit prevents thundering herd after recovery
-//!
-//! **Future improvement:** When NACK messages carry error categorization
-//! (e.g., `retryable: bool` or error codes), we can drop permanently-failed
-//! data immediately while still retrying transient failures.
 
 mod bundle_adapter;
 mod config;
@@ -149,6 +150,24 @@ pub struct DurableBufferMetrics {
     /// Number of bundles rejected (deferred for retry) by downstream.
     #[metric(unit = "{bundle}")]
     pub bundles_nacked: Counter<u64>,
+
+    /// Number of bundles permanently rejected by downstream (not retried).
+    /// These indicate data loss due to permanent failures (e.g., malformed data).
+    #[metric(unit = "{bundle}")]
+    pub bundles_rejected_permanent: Counter<u64>,
+
+    // ─── Rejected item metrics (per signal type) ────────────────────────
+    /// Number of log records rejected.
+    #[metric(unit = "{log_record}")]
+    pub rejected_log_records: Counter<u64>,
+
+    /// Number of metric data points rejected.
+    #[metric(unit = "{data_point}")]
+    pub rejected_metric_points: Counter<u64>,
+
+    /// Number of spans rejected.
+    #[metric(unit = "{span}")]
+    pub rejected_spans: Counter<u64>,
 
     // ─── Consumed item metrics (per signal type) ────────────────────────
     /// Number of log records consumed (ingested to WAL).
@@ -1326,7 +1345,10 @@ impl DurableBuffer {
 
     /// Handle NACK from downstream.
     ///
-    /// Schedules a retry with exponential backoff using `delay_data()`.
+    /// For permanent NACKs (e.g., malformed data that will never succeed), the bundle
+    /// is rejected immediately without retry.
+    ///
+    /// For transient NACKs, schedules a retry with exponential backoff using `delay_data()`.
     /// The bundle is deferred in Quiver (releasing the claim) and a lightweight
     /// retry ticket is scheduled. When the delay expires, `handle_delayed_retry`
     /// will re-claim the bundle and attempt redelivery.
@@ -1343,13 +1365,38 @@ impl DurableBuffer {
 
         let key = (bundle_ref.segment_seq.raw(), bundle_ref.bundle_index.raw());
 
-        // Handle retry scheduling
+        // Handle based on whether this is a permanent or transient failure
         if let Some(pending) = self.pending_bundles.remove(&key) {
-            let retry_count = pending.retry_count + 1;
-            self.metrics.bundles_nacked.add(1);
             self.metrics
                 .in_flight
                 .set(self.pending_bundles.len() as u64);
+
+            // Permanent failures should not be retried - reject the bundle immediately
+            if nack.permanent {
+                // Track permanently rejected items by signal type (individual items in NACKed bundles)
+                match pending.signal_type {
+                    SignalType::Logs => self.metrics.rejected_log_records.add(pending.item_count),
+                    SignalType::Metrics => {
+                        self.metrics.rejected_metric_points.add(pending.item_count)
+                    }
+                    SignalType::Traces => self.metrics.rejected_spans.add(pending.item_count),
+                }
+                self.metrics.bundles_rejected_permanent.add(1);
+
+                otel_warn!(
+                    "durable_buffer.bundle.rejected_permanent",
+                    segment_seq = bundle_ref.segment_seq.raw(),
+                    bundle_index = bundle_ref.bundle_index.raw(),
+                    reason = %nack.reason
+                );
+
+                // Reject the bundle in Quiver (marks as permanently failed)
+                pending.handle.reject();
+                return Ok(());
+            }
+
+            // Transient failure - schedule retry with exponential backoff
+            let retry_count = pending.retry_count + 1;
 
             // Track requeued items by signal type (individual items in NACKed bundles)
             match pending.signal_type {
@@ -1357,6 +1404,7 @@ impl DurableBuffer {
                 SignalType::Metrics => self.metrics.requeued_metric_points.add(pending.item_count),
                 SignalType::Traces => self.metrics.requeued_spans.add(pending.item_count),
             }
+            self.metrics.bundles_nacked.add(1);
 
             // Calculate backoff delay with jitter
             let backoff = self.calculate_backoff(retry_count);
