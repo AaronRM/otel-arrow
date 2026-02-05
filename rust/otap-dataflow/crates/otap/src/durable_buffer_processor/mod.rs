@@ -147,9 +147,9 @@ pub struct DurableBufferMetrics {
     #[metric(unit = "{bundle}")]
     pub bundles_acked: Counter<u64>,
 
-    /// Number of bundles rejected (deferred for retry) by downstream.
+    /// Number of bundles deferred for retry after transient downstream failures.
     #[metric(unit = "{bundle}")]
-    pub bundles_nacked: Counter<u64>,
+    pub bundles_deferred: Counter<u64>,
 
     /// Number of bundles permanently rejected by downstream (not retried).
     /// These indicate data loss due to permanent failures (e.g., malformed data).
@@ -1404,7 +1404,7 @@ impl DurableBuffer {
                 SignalType::Metrics => self.metrics.requeued_metric_points.add(pending.item_count),
                 SignalType::Traces => self.metrics.requeued_spans.add(pending.item_count),
             }
-            self.metrics.bundles_nacked.add(1);
+            self.metrics.bundles_deferred.add(1);
 
             // Calculate backoff delay with jitter
             let backoff = self.calculate_backoff(retry_count);
