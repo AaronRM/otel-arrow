@@ -51,7 +51,7 @@
 //!
 //! - **Permanent NACKs** (e.g., malformed data, schema validation failures): The bundle
 //!   is immediately rejected via `handle.reject()` and will not be retried. Monitor the
-//!   `bundles_rejected_permanent` metric to detect data being dropped due to permanent failures.
+//!   `bundles_nacked_permanent` metric to detect data being dropped due to permanent failures.
 //!
 //! - **Transient NACKs** (e.g., network issues, temporary downstream unavailability): Bundles
 //!   are retried with exponential backoff until either delivery succeeds or the data is evicted
@@ -62,7 +62,7 @@
 //!
 //! **Operational guidance:**
 //!
-//! - Monitor `bundles_rejected_permanent` metric to detect permanent failures (data loss)
+//! - Monitor `bundles_nacked_permanent` metric to detect permanent failures (data loss)
 //! - Monitor `retries_scheduled` metric to detect persistently failing data
 //! - Use `retention_size_cap` to bound storage; `drop_oldest` policy evicts
 //!   stuck data when space is needed for new data
@@ -149,12 +149,12 @@ pub struct DurableBufferMetrics {
 
     /// Number of bundles deferred for retry after transient downstream failures.
     #[metric(unit = "{bundle}")]
-    pub bundles_deferred: Counter<u64>,
+    pub bundles_nacked_deferred: Counter<u64>,
 
     /// Number of bundles permanently rejected by downstream (not retried).
     /// These indicate data loss due to permanent failures (e.g., malformed data).
     #[metric(unit = "{bundle}")]
-    pub bundles_rejected_permanent: Counter<u64>,
+    pub bundles_nacked_permanent: Counter<u64>,
 
     // ─── Rejected item metrics (per signal type) ────────────────────────
     /// Number of log records rejected.
@@ -1381,7 +1381,7 @@ impl DurableBuffer {
                     }
                     SignalType::Traces => self.metrics.rejected_spans.add(pending.item_count),
                 }
-                self.metrics.bundles_rejected_permanent.add(1);
+                self.metrics.bundles_nacked_permanent.add(1);
 
                 otel_warn!(
                     "durable_buffer.bundle.rejected_permanent",
@@ -1404,7 +1404,7 @@ impl DurableBuffer {
                 SignalType::Metrics => self.metrics.requeued_metric_points.add(pending.item_count),
                 SignalType::Traces => self.metrics.requeued_spans.add(pending.item_count),
             }
-            self.metrics.bundles_deferred.add(1);
+            self.metrics.bundles_nacked_deferred.add(1);
 
             // Calculate backoff delay with jitter
             let backoff = self.calculate_backoff(retry_count);
