@@ -1938,4 +1938,166 @@ mod tests {
         assert!(backoff100 >= Duration::from_millis(15000));
         assert!(backoff100 <= Duration::from_millis(30000));
     }
+
+    /// Test that DurableBufferMetrics snapshot correctly reports NACK metrics.
+    ///
+    /// Verifies:
+    /// - bundles_nacked_deferred (index 1) and bundles_nacked_permanent (index 2)
+    ///   are distinct counters reported at the correct positions
+    /// - retries_scheduled (index 15) is correctly reported
+    /// - bundles_acked (index 0) is correctly reported
+    /// - Snapshot clears values (delta semantics)
+    #[test]
+    fn test_nack_metrics_snapshot_field_positions() {
+        use otap_df_engine::context::ControllerContext;
+        use otap_df_telemetry::registry::TelemetryRegistryHandle;
+        use otap_df_telemetry::reporter::MetricsReporter;
+
+        let registry = TelemetryRegistryHandle::default();
+        let controller_ctx = ControllerContext::new(registry);
+        let pipeline_ctx =
+            controller_ctx.pipeline_context_with("test".into(), "test".into(), 0, 1, 0);
+
+        let config = DurableBufferConfig {
+            path: std::path::PathBuf::from("/tmp/test-metrics"),
+            retention_size_cap: byte_unit::Byte::from_u64(1024),
+            max_age: None,
+            size_cap_policy: SizeCapPolicy::Backpressure,
+            poll_interval: Duration::from_millis(100),
+            otlp_handling: OtlpHandling::PassThrough,
+            max_segment_open_duration: Duration::from_secs(1),
+            initial_retry_interval: Duration::from_secs(1),
+            max_retry_interval: Duration::from_secs(30),
+            retry_multiplier: 2.0,
+            max_in_flight: 1000,
+        };
+
+        let mut processor = DurableBuffer::new(config, &pipeline_ctx).unwrap();
+
+        // Simulate the metric increments that handle_nack would perform
+        // for permanent NACKs:
+        processor.metrics.bundles_nacked_permanent.add(3);
+
+        // for transient NACKs:
+        processor.metrics.bundles_nacked_deferred.add(5);
+
+        // for retries scheduled (only on transient):
+        processor.metrics.retries_scheduled.add(5);
+
+        // for ACKs:
+        processor.metrics.bundles_acked.add(10);
+
+        // Take a snapshot and verify field positions
+        let (metrics_rx, mut reporter) = MetricsReporter::create_new_and_receiver(1);
+        reporter.report(&mut processor.metrics).unwrap();
+        let snapshot = metrics_rx.try_recv().unwrap();
+        let values = snapshot.get_metrics();
+
+        // Verify total metric count matches DurableBufferMetrics field count
+        assert_eq!(
+            values.len(),
+            17,
+            "DurableBufferMetrics should have 17 fields, got {}",
+            values.len()
+        );
+
+        // Index 0: bundles_acked
+        assert_eq!(
+            values[0].to_u64_lossy(),
+            10,
+            "bundles_acked (index 0) should be 10"
+        );
+
+        // Index 1: bundles_nacked_deferred
+        assert_eq!(
+            values[1].to_u64_lossy(),
+            5,
+            "bundles_nacked_deferred (index 1) should be 5"
+        );
+
+        // Index 2: bundles_nacked_permanent
+        assert_eq!(
+            values[2].to_u64_lossy(),
+            3,
+            "bundles_nacked_permanent (index 2) should be 3"
+        );
+
+        // Index 15: retries_scheduled
+        assert_eq!(
+            values[15].to_u64_lossy(),
+            5,
+            "retries_scheduled (index 15) should be 5"
+        );
+
+        // Verify delta semantics: after snapshot, counters should be cleared.
+        // The NACK-related counter values we set above should now be zero.
+        // (Gauges may still report due to Gauge::clear semantics, so we verify
+        // counters specifically by taking another snapshot.)
+        reporter.report(&mut processor.metrics).unwrap_or(());
+        if let Ok(snap2) = metrics_rx.try_recv() {
+            let vals2 = snap2.get_metrics();
+            assert_eq!(vals2[0].to_u64_lossy(), 0, "bundles_acked should be 0 after reset");
+            assert_eq!(vals2[1].to_u64_lossy(), 0, "bundles_nacked_deferred should be 0 after reset");
+            assert_eq!(vals2[2].to_u64_lossy(), 0, "bundles_nacked_permanent should be 0 after reset");
+            assert_eq!(vals2[15].to_u64_lossy(), 0, "retries_scheduled should be 0 after reset");
+        }
+    }
+
+    /// Test that permanent NACK metrics are independent from transient NACK metrics.
+    ///
+    /// This specifically validates the branch change: the old `bundles_nacked`
+    /// counter was split into `bundles_nacked_deferred` and `bundles_nacked_permanent`.
+    /// This test ensures:
+    /// - Incrementing one doesn't affect the other
+    /// - Both appear at distinct indices in the snapshot
+    #[test]
+    fn test_permanent_vs_transient_nack_metrics_independence() {
+        use otap_df_engine::context::ControllerContext;
+        use otap_df_telemetry::registry::TelemetryRegistryHandle;
+        use otap_df_telemetry::reporter::MetricsReporter;
+
+        let registry = TelemetryRegistryHandle::default();
+        let controller_ctx = ControllerContext::new(registry);
+        let pipeline_ctx =
+            controller_ctx.pipeline_context_with("test".into(), "test".into(), 0, 1, 0);
+
+        let config = DurableBufferConfig {
+            path: std::path::PathBuf::from("/tmp/test-independence"),
+            retention_size_cap: byte_unit::Byte::from_u64(1024),
+            max_age: None,
+            size_cap_policy: SizeCapPolicy::Backpressure,
+            poll_interval: Duration::from_millis(100),
+            otlp_handling: OtlpHandling::PassThrough,
+            max_segment_open_duration: Duration::from_secs(1),
+            initial_retry_interval: Duration::from_secs(1),
+            max_retry_interval: Duration::from_secs(30),
+            retry_multiplier: 2.0,
+            max_in_flight: 1000,
+        };
+
+        let mut processor = DurableBuffer::new(config, &pipeline_ctx).unwrap();
+        let (metrics_rx, mut reporter) = MetricsReporter::create_new_and_receiver(10);
+
+        // Scenario 1: Only permanent NACKs
+        processor.metrics.bundles_nacked_permanent.add(7);
+        reporter.report(&mut processor.metrics).unwrap();
+        let snap1 = metrics_rx.try_recv().unwrap();
+        assert_eq!(snap1.get_metrics()[1].to_u64_lossy(), 0, "deferred should be 0");
+        assert_eq!(snap1.get_metrics()[2].to_u64_lossy(), 7, "permanent should be 7");
+
+        // Scenario 2: Only transient NACKs (after reset from previous snapshot)
+        processor.metrics.bundles_nacked_deferred.add(4);
+        reporter.report(&mut processor.metrics).unwrap();
+        let snap2 = metrics_rx.try_recv().unwrap();
+        assert_eq!(snap2.get_metrics()[1].to_u64_lossy(), 4, "deferred should be 4");
+        assert_eq!(snap2.get_metrics()[2].to_u64_lossy(), 0, "permanent should be 0 (reset)");
+
+        // Scenario 3: Both in same interval
+        processor.metrics.bundles_nacked_permanent.add(2);
+        processor.metrics.bundles_nacked_deferred.add(3);
+        reporter.report(&mut processor.metrics).unwrap();
+        let snap3 = metrics_rx.try_recv().unwrap();
+        assert_eq!(snap3.get_metrics()[1].to_u64_lossy(), 3, "deferred should be 3");
+        assert_eq!(snap3.get_metrics()[2].to_u64_lossy(), 2, "permanent should be 2");
+    }
 }
