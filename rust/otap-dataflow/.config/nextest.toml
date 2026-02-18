@@ -1,2 +1,8 @@
 [profile.default]
 slow-timeout = { period = "60s", terminate-after = 2 }
+
+# Profile for long-running chaos stress tests (chaos_stress_tests.rs).
+# These tests are #[ignore]'d and run with --run-ignored only.
+# Usage: cargo nextest run -p otap-df-otap --profile chaos-stress --run-ignored only -E 'test(chaos_stress)'
+[profile.chaos-stress]
+slow-timeout = { period = "60s", terminate-after = 10 }

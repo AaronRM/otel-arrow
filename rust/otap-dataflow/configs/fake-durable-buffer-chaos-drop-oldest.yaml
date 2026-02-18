@@ -1,0 +1,54 @@
+# Same as fake-durable-buffer-chaos.yaml but with drop_oldest policy.
+#
+# With drop_oldest, the buffer will evict the oldest undelivered segments
+# when at capacity instead of applying backpressure. This means ingest
+# never blocks, but you may lose data during extended outages.
+#
+# USAGE:
+#   echo '{}' > /tmp/chaos-exporter.json
+#   ./target/release/df_engine --pipeline configs/fake-durable-buffer-chaos-drop-oldest.yaml
+#
+# Compare behavior with the backpressure variant:
+#   - Backpressure: ingest slows down, no data loss, upstream NACKed
+#   - Drop-oldest: ingest stays fast, oldest buffered data is evicted
+
+settings:
+  default_pipeline_ctrl_msg_channel_size: 100
+  default_node_ctrl_msg_channel_size: 100
+  default_pdata_channel_size: 100
+
+nodes:
+  receiver:
+    type: traffic_generator:receiver
+    config:
+      traffic_config:
+        max_signal_count: null
+        max_batch_size: 50
+        signals_per_second: 5000
+        log_weight: 100
+
+  durable_buffer:
+    type: durable_buffer:processor
+    config:
+      path: /tmp/otap-backpressure-test-drop-oldest/buffer
+      poll_interval: 20ms
+      retention_size_cap: "256MB"
+      size_cap_policy: drop_oldest
+      max_segment_open_duration: 500ms
+      initial_retry_interval: 200ms
+      max_retry_interval: 2s
+      retry_multiplier: 2.0
+      max_in_flight: 100
+
+  exporter:
+    type: chaos:exporter
+    config:
+      control_file: /tmp/chaos-exporter.json
+      check_interval: 500ms
+      log_every_n: 500
+
+connections:
+  - from: receiver
+    to: durable_buffer
+  - from: durable_buffer
+    to: exporter

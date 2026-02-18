@@ -1,0 +1,81 @@
+# Fake Data -> Durable Buffer -> Chaos Exporter
+#
+# For manual backpressure / offline-recovery / degraded-network testing.
+#
+# USAGE:
+#   # Build
+#   cargo build --release
+#
+#   # Create the control file (empty = online with no latency)
+#   echo '{}' > /tmp/chaos-exporter.json
+#
+#   # Run the pipeline
+#   ./target/release/df_engine --pipeline configs/fake-durable-buffer-chaos.yaml
+#
+# SCENARIOS (edit the control file in another terminal):
+#
+#   # Total outage — NACK everything, buffer fills, backpressure engages:
+#   echo '{"mode":"offline"}' > /tmp/chaos-exporter.json
+#
+#   # Degraded connectivity — 30% packet loss with 200ms latency:
+#   echo '{"mode":"flaky","failure_rate":0.3,"latency_ms":200}' > /tmp/chaos-exporter.json
+#
+#   # Slow but reliable endpoint — 500ms ± 100ms response time:
+#   echo '{"mode":"online","latency_ms":500,"jitter_ms":100}' > /tmp/chaos-exporter.json
+#
+#   # Full recovery — fast ACKs, drain buffered data:
+#   echo '{}' > /tmp/chaos-exporter.json
+#
+# WHAT TO OBSERVE:
+#   - "chaos_exporter.state_change" logs when you edit the file
+#   - "durable_buffer.ingest.backpressure" warnings as storage fills
+#   - "chaos_exporter.progress" periodic ACK/NACK counts
+#   - storage_bytes_used metric rises during offline, falls during recovery
+
+settings:
+  default_pipeline_ctrl_msg_channel_size: 100
+  default_node_ctrl_msg_channel_size: 100
+  default_pdata_channel_size: 100
+
+nodes:
+  receiver:
+    type: traffic_generator:receiver
+    config:
+      traffic_config:
+        # Generate signals continuously
+        max_signal_count: null
+        max_batch_size: 50
+        # Moderate rate — enough to fill a 256 MB buffer in a few minutes
+        signals_per_second: 5000
+        log_weight: 100
+
+  durable_buffer:
+    type: durable_buffer:processor
+    config:
+      path: /tmp/otap-backpressure-test/buffer
+      poll_interval: 20ms
+      # Small retention so we can observe capacity behavior without needing
+      # huge disk. The default QuiverConfig uses 32 MB segments + 128 MB WAL,
+      # so the minimum budget per core ~ 192 MB. 256 MB gives a bit of headroom.
+      retention_size_cap: "256MB"
+      size_cap_policy: backpressure
+      max_segment_open_duration: 500ms
+      # Fast retries for interactive testing
+      initial_retry_interval: 200ms
+      max_retry_interval: 2s
+      retry_multiplier: 2.0
+      max_in_flight: 100
+
+  exporter:
+    type: chaos:exporter
+    config:
+      control_file: /tmp/chaos-exporter.json
+      check_interval: 500ms
+      # Print a status line every 500 messages
+      log_every_n: 500
+
+connections:
+  - from: receiver
+    to: durable_buffer
+  - from: durable_buffer
+    to: exporter

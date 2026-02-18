@@ -106,7 +106,10 @@ enum SignalGenerator {
     /// Uses semantic conventions registry via weaver
     SemanticConventions(ResolvedRegistry),
     /// Uses static hardcoded signals
-    Static,
+    Static {
+        /// Optional target body size in bytes for log records
+        log_body_size: Option<usize>,
+    },
 }
 
 impl SignalGenerator {
@@ -116,7 +119,7 @@ impl SignalGenerator {
             SignalGenerator::SemanticConventions(registry) => {
                 OtlpProtoMessage::Traces(semconv_signal::semconv_otlp_traces(count, registry))
             }
-            SignalGenerator::Static => {
+            SignalGenerator::Static { .. } => {
                 OtlpProtoMessage::Traces(static_signal::static_otlp_traces(count))
             }
         }
@@ -128,7 +131,7 @@ impl SignalGenerator {
             SignalGenerator::SemanticConventions(registry) => {
                 OtlpProtoMessage::Metrics(semconv_signal::semconv_otlp_metrics(count, registry))
             }
-            SignalGenerator::Static => {
+            SignalGenerator::Static { .. } => {
                 OtlpProtoMessage::Metrics(static_signal::static_otlp_metrics(count))
             }
         }
@@ -140,8 +143,8 @@ impl SignalGenerator {
             SignalGenerator::SemanticConventions(registry) => {
                 OtlpProtoMessage::Logs(semconv_signal::semconv_otlp_logs(count, registry))
             }
-            SignalGenerator::Static => {
-                OtlpProtoMessage::Logs(static_signal::static_otlp_logs(count))
+            SignalGenerator::Static { log_body_size } => {
+                OtlpProtoMessage::Logs(static_signal::static_otlp_logs(count, *log_body_size))
             }
         }
     }
@@ -248,7 +251,9 @@ impl local::Receiver<OtapPdata> for FakeGeneratorReceiver {
                     .expect("SemanticConventions data source should return Some registry");
                 SignalGenerator::SemanticConventions(registry)
             }
-            DataSource::Static => SignalGenerator::Static,
+            DataSource::Static => SignalGenerator::Static {
+                log_body_size: traffic_config.get_log_body_size(),
+            },
         };
 
         let (metric_count, trace_count, log_count) = traffic_config.calculate_signal_count();

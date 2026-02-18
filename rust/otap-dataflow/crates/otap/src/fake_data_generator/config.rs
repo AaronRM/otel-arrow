@@ -92,6 +92,11 @@ pub struct TrafficConfig {
     trace_weight: u32,
     #[serde(default = "default_weight")]
     log_weight: u32,
+    /// Target size in bytes for the log record body.
+    /// When set, generates a padded log body of approximately this size.
+    /// When `None` (default), uses a short realistic log message (~30 bytes).
+    #[serde(default)]
+    log_body_size: Option<usize>,
 }
 
 impl Config {
@@ -201,6 +206,7 @@ impl TrafficConfig {
             metric_weight,
             trace_weight,
             log_weight,
+            log_body_size: None,
         }
     }
 
@@ -265,6 +271,12 @@ impl TrafficConfig {
     #[must_use]
     pub const fn get_max_batch_size(&self) -> usize {
         self.max_batch_size
+    }
+
+    /// returns the configured log body size, if any
+    #[must_use]
+    pub const fn get_log_body_size(&self) -> Option<usize> {
+        self.log_body_size
     }
 }
 

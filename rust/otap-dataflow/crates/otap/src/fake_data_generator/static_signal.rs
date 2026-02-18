@@ -50,8 +50,6 @@ fn static_metric_attributes() -> Vec<KeyValue> {
 }
 
 /// Static log attributes for load testing.
-/// TODO: Currently sized to produce approximately 300 bytes per log record.
-/// Consider increasing to ~1 KB for more realistic production workloads.
 fn static_log_attributes() -> Vec<KeyValue> {
     vec![
         KeyValue::new("thread.id", AnyValue::new_int(1)),
@@ -82,10 +80,14 @@ pub fn static_otlp_traces(signal_count: usize) -> TracesData {
     TracesData::new(resources)
 }
 
-/// Generates LogsData with static hardcoded log records
+/// Generates LogsData with static hardcoded log records.
+///
+/// `log_body_size` controls the approximate size of each log record's body field.
+/// - `None` → short realistic message (~30 bytes)
+/// - `Some(n)` → padded body of approximately `n` bytes
 #[must_use]
-pub fn static_otlp_logs(signal_count: usize) -> LogsData {
-    let logs = static_logs(signal_count);
+pub fn static_otlp_logs(signal_count: usize, log_body_size: Option<usize>) -> LogsData {
+    let logs = static_logs(signal_count, log_body_size);
 
     let scopes = vec![ScopeLogs::new(
         InstrumentationScope::build()
@@ -190,23 +192,59 @@ fn static_metrics(signal_count: usize) -> Vec<Metric> {
         .collect()
 }
 
+/// The default log body when no size override is specified.
+const DEFAULT_LOG_BODY: &str = "Order processed successfully";
+
+/// Generate a log body string of approximately `target_size` bytes.
+///
+/// Produces a realistic-looking structured log message padded with
+/// stack-trace-like filler to reach the target size.
+fn generate_sized_log_body(target_size: usize) -> String {
+    let prefix = "Order processed successfully | request_id=a]b2c3d4-e5f6-7890-abcd-ef1234567890 | trace_id=0af7651916cd43dd8448eb211c80319c | ";
+    let line = "    at com.example.service.OrderProcessor.process(OrderProcessor.java:142)\n";
+
+    if target_size <= prefix.len() {
+        return prefix[..target_size].to_string();
+    }
+
+    let mut body = String::with_capacity(target_size);
+    body.push_str(prefix);
+
+    while body.len() + line.len() <= target_size {
+        body.push_str(line);
+    }
+
+    // Fill remaining bytes
+    let remaining = target_size.saturating_sub(body.len());
+    if remaining > 0 {
+        body.extend(std::iter::repeat_n('x', remaining));
+    }
+
+    body
+}
+
 /// Generate static log records for load testing.
-/// TODO: Currently produces approximately 300 bytes per log record.
-/// Consider increasing to ~1 KB for more realistic production workloads.
-fn static_logs(signal_count: usize) -> Vec<LogRecord> {
+///
+/// `log_body_size` controls the approximate size of each log record's body field.
+/// - `None` → short realistic message (~30 bytes)
+/// - `Some(n)` → padded body of approximately `n` bytes
+fn static_logs(signal_count: usize, log_body_size: Option<usize>) -> Vec<LogRecord> {
     let attributes = static_log_attributes();
+    let body_str = match log_body_size {
+        Some(size) => generate_sized_log_body(size),
+        None => DEFAULT_LOG_BODY.to_string(),
+    };
 
     (0..signal_count)
         .map(|_| {
             let timestamp = current_time();
 
-            // TODO: Consider increasing body size to ~1KB for more realistic production workloads
             LogRecord::build()
                 .time_unix_nano(timestamp)
                 .observed_time_unix_nano(timestamp)
                 .severity_number(SeverityNumber::Info)
                 .severity_text("INFO")
-                .body(AnyValue::new_string("Order processed successfully"))
+                .body(AnyValue::new_string(&body_str))
                 .attributes(attributes.clone())
                 .finish()
         })
@@ -238,9 +276,39 @@ mod tests {
 
     #[test]
     fn test_static_logs() {
-        let logs = static_otlp_logs(10);
+        let logs = static_otlp_logs(10, None);
         assert_eq!(logs.resource_logs.len(), 1);
         assert_eq!(logs.resource_logs[0].scope_logs.len(), 1);
         assert_eq!(logs.resource_logs[0].scope_logs[0].log_records.len(), 10);
+    }
+
+    #[test]
+    fn test_static_logs_with_body_size() {
+        let logs = static_otlp_logs(5, Some(4096));
+        assert_eq!(logs.resource_logs[0].scope_logs[0].log_records.len(), 5);
+
+        // Verify body is approximately the requested size
+        let body = &logs.resource_logs[0].scope_logs[0].log_records[0]
+            .body
+            .as_ref()
+            .unwrap()
+            .value
+            .as_ref()
+            .unwrap();
+        if let otap_df_pdata::proto::opentelemetry::common::v1::any_value::Value::StringValue(s) =
+            body
+        {
+            assert_eq!(s.len(), 4096, "Body should be exactly 4096 bytes");
+        } else {
+            panic!("Expected string body");
+        }
+    }
+
+    #[test]
+    fn test_generate_sized_log_body() {
+        for size in [100, 500, 1024, 4096, 8192] {
+            let body = generate_sized_log_body(size);
+            assert_eq!(body.len(), size, "Body should be exactly {size} bytes");
+        }
     }
 }

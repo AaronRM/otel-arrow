@@ -55,6 +55,9 @@ pub mod fanout_processor;
 /// An error-exporter returns a static error.
 pub mod error_exporter;
 
+/// Chaos-engineering exporter for manual backpressure and failure-injection testing.
+pub mod chaos_exporter;
+
 /// Experimental exporters and processors
 #[cfg(any(
     feature = "experimental-exporters",
