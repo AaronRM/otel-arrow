@@ -21,6 +21,8 @@ pub mod otlp_receiver;
 /// Implementation of OTLP exporter that implements the exporter trait
 pub mod otlp_exporter;
 
+pub mod otlp_http_exporter;
+
 /// Batch processor
 pub mod batch_processor;
 
@@ -106,6 +108,10 @@ pub mod cloud_auth;
 
 /// Internal telemetry receiver
 pub mod internal_telemetry_receiver;
+
+pub mod topic_receiver;
+
+pub mod topic_exporter;
 
 /// Object storage utilities including integrations for different cloud
 /// providers
