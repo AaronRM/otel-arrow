@@ -2036,10 +2036,26 @@ mod tests {
         reporter.report(&mut processor.metrics).unwrap_or(());
         if let Ok(snap2) = metrics_rx.try_recv() {
             let vals2 = snap2.get_metrics();
-            assert_eq!(vals2[0].to_u64_lossy(), 0, "bundles_acked should be 0 after reset");
-            assert_eq!(vals2[1].to_u64_lossy(), 0, "bundles_nacked_deferred should be 0 after reset");
-            assert_eq!(vals2[2].to_u64_lossy(), 0, "bundles_nacked_permanent should be 0 after reset");
-            assert_eq!(vals2[15].to_u64_lossy(), 0, "retries_scheduled should be 0 after reset");
+            assert_eq!(
+                vals2[0].to_u64_lossy(),
+                0,
+                "bundles_acked should be 0 after reset"
+            );
+            assert_eq!(
+                vals2[1].to_u64_lossy(),
+                0,
+                "bundles_nacked_deferred should be 0 after reset"
+            );
+            assert_eq!(
+                vals2[2].to_u64_lossy(),
+                0,
+                "bundles_nacked_permanent should be 0 after reset"
+            );
+            assert_eq!(
+                vals2[15].to_u64_lossy(),
+                0,
+                "retries_scheduled should be 0 after reset"
+            );
         }
     }
 
@@ -2082,22 +2098,46 @@ mod tests {
         processor.metrics.bundles_nacked_permanent.add(7);
         reporter.report(&mut processor.metrics).unwrap();
         let snap1 = metrics_rx.try_recv().unwrap();
-        assert_eq!(snap1.get_metrics()[1].to_u64_lossy(), 0, "deferred should be 0");
-        assert_eq!(snap1.get_metrics()[2].to_u64_lossy(), 7, "permanent should be 7");
+        assert_eq!(
+            snap1.get_metrics()[1].to_u64_lossy(),
+            0,
+            "deferred should be 0"
+        );
+        assert_eq!(
+            snap1.get_metrics()[2].to_u64_lossy(),
+            7,
+            "permanent should be 7"
+        );
 
         // Scenario 2: Only transient NACKs (after reset from previous snapshot)
         processor.metrics.bundles_nacked_deferred.add(4);
         reporter.report(&mut processor.metrics).unwrap();
         let snap2 = metrics_rx.try_recv().unwrap();
-        assert_eq!(snap2.get_metrics()[1].to_u64_lossy(), 4, "deferred should be 4");
-        assert_eq!(snap2.get_metrics()[2].to_u64_lossy(), 0, "permanent should be 0 (reset)");
+        assert_eq!(
+            snap2.get_metrics()[1].to_u64_lossy(),
+            4,
+            "deferred should be 4"
+        );
+        assert_eq!(
+            snap2.get_metrics()[2].to_u64_lossy(),
+            0,
+            "permanent should be 0 (reset)"
+        );
 
         // Scenario 3: Both in same interval
         processor.metrics.bundles_nacked_permanent.add(2);
         processor.metrics.bundles_nacked_deferred.add(3);
         reporter.report(&mut processor.metrics).unwrap();
         let snap3 = metrics_rx.try_recv().unwrap();
-        assert_eq!(snap3.get_metrics()[1].to_u64_lossy(), 3, "deferred should be 3");
-        assert_eq!(snap3.get_metrics()[2].to_u64_lossy(), 2, "permanent should be 2");
+        assert_eq!(
+            snap3.get_metrics()[1].to_u64_lossy(),
+            3,
+            "deferred should be 3"
+        );
+        assert_eq!(
+            snap3.get_metrics()[2].to_u64_lossy(),
+            2,
+            "permanent should be 2"
+        );
     }
 }

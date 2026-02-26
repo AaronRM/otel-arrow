@@ -216,10 +216,7 @@ impl Exporter<OtapPdata> for FlakyExporter {
                                 let _ = nack_count.fetch_add(1, Ordering::Relaxed);
                             }
                             effect_handler
-                                .notify_nack(NackMsg::new(
-                                    "simulated transient failure",
-                                    data,
-                                ))
+                                .notify_nack(NackMsg::new("simulated transient failure", data))
                                 .await?;
                         }
                     }

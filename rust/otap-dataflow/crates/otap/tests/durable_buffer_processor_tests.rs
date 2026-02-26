@@ -31,8 +31,8 @@ use otap_df_pdata::proto::opentelemetry::arrow::v1::ArrowPayloadType;
 use otap_df_state::store::ObservedStateStore;
 use otap_df_telemetry::InternalTelemetrySystem;
 use otap_df_telemetry::metrics::MetricSetSnapshot;
-use otap_df_telemetry::reporter::MetricsReporter;
 use otap_df_telemetry::registry::TelemetryRegistryHandle;
+use otap_df_telemetry::reporter::MetricsReporter;
 use quiver::segment::SegmentReader;
 use serde_json::json;
 use std::collections::HashMap;
@@ -1588,7 +1588,10 @@ fn test_durable_buffer_permanent_nack_rejects_without_retry() {
             Duration::from_secs(5),
             Duration::from_millis(10),
         );
-        assert!(delivered, "Expected data to be delivered after switching to ACK mode");
+        assert!(
+            delivered,
+            "Expected data to be delivered after switching to ACK mode"
+        );
 
         (permanent_nacks_before, transient_nacks_before)
     });
@@ -1665,9 +1668,13 @@ fn test_durable_buffer_permanent_nack_rejects_without_retry() {
     println!(
         "permanent_nack_rejects: permanent_nacks={}, transient_nacks={}, delivered={}, \
          metrics=[acked={}, deferred={}, permanent={}, retries={}]",
-        total_permanent_nacks, total_transient_nacks, delivered,
-        metrics.bundles_acked(), metrics.bundles_nacked_deferred(),
-        metrics.bundles_nacked_permanent(), metrics.retries_scheduled()
+        total_permanent_nacks,
+        total_transient_nacks,
+        delivered,
+        metrics.bundles_acked(),
+        metrics.bundles_nacked_deferred(),
+        metrics.bundles_nacked_permanent(),
+        metrics.retries_scheduled()
     );
 }
 
@@ -1819,8 +1826,14 @@ fn test_durable_buffer_mixed_transient_and_permanent_nacks() {
     println!(
         "mixed_nacks: transient={} (total={}), permanent={} (total={}), delivered={}, \
          metrics=[acked={}, deferred={}, permanent={}, retries={}]",
-        transient_nacks, total_transient, permanent_nacks, total_permanent, delivered,
-        metrics.bundles_acked(), metrics.bundles_nacked_deferred(),
-        metrics.bundles_nacked_permanent(), metrics.retries_scheduled()
+        transient_nacks,
+        total_transient,
+        permanent_nacks,
+        total_permanent,
+        delivered,
+        metrics.bundles_acked(),
+        metrics.bundles_nacked_deferred(),
+        metrics.bundles_nacked_permanent(),
+        metrics.retries_scheduled()
     );
 }
