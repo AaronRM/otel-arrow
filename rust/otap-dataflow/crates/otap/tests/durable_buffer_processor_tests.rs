@@ -1524,7 +1524,8 @@ fn test_durable_buffer_otlp_item_count_metrics() {
     // items get grouped per bundle), but there must be at least 3 — one per
     // signal type (logs, traces, metrics).
     metrics_snapshot.assert_ge("bundles.acked", 3);
-    metrics_snapshot.assert_eq("bundles.nacked", 0);
+    metrics_snapshot.assert_eq("bundles.nacked.deferred", 0);
+    metrics_snapshot.assert_eq("bundles.nacked.permanent", 0);
 
     // No errors, drops, or expirations in a clean run.
     metrics_snapshot.assert_eq("dropped.items", 0);
