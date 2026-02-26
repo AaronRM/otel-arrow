@@ -1944,7 +1944,7 @@ mod tests {
     /// Verifies:
     /// - bundles_nacked_deferred (index 1) and bundles_nacked_permanent (index 2)
     ///   are distinct counters reported at the correct positions
-    /// - retries_scheduled (index 15) is correctly reported
+    /// - retries_scheduled (index 22) is correctly reported
     /// - bundles_acked (index 0) is correctly reported
     /// - Snapshot clears values (delta semantics)
     #[test]
@@ -1996,8 +1996,8 @@ mod tests {
         // Verify total metric count matches DurableBufferMetrics field count
         assert_eq!(
             values.len(),
-            17,
-            "DurableBufferMetrics should have 17 fields, got {}",
+            30,
+            "DurableBufferMetrics should have 30 fields, got {}",
             values.len()
         );
 
@@ -2022,11 +2022,11 @@ mod tests {
             "bundles_nacked_permanent (index 2) should be 3"
         );
 
-        // Index 15: retries_scheduled
+        // Index 22: retries_scheduled
         assert_eq!(
-            values[15].to_u64_lossy(),
+            values[22].to_u64_lossy(),
             5,
-            "retries_scheduled (index 15) should be 5"
+            "retries_scheduled (index 22) should be 5"
         );
 
         // Verify delta semantics: after snapshot, counters should be cleared.
@@ -2052,7 +2052,7 @@ mod tests {
                 "bundles_nacked_permanent should be 0 after reset"
             );
             assert_eq!(
-                vals2[15].to_u64_lossy(),
+                vals2[22].to_u64_lossy(),
                 0,
                 "retries_scheduled should be 0 after reset"
             );
