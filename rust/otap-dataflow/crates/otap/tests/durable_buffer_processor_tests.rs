@@ -296,17 +296,34 @@ fn run_pipeline_with_condition<F>(
 ///   0: bundles_acked
 ///   1: bundles_nacked_deferred
 ///   2: bundles_nacked_permanent
-///   3..5: consumed_arrow_{logs,metrics,traces}
-///   6..8: produced_arrow_{logs,metrics,traces}
-///   9: ingest_errors
-///   10: read_errors
-///   11: storage_bytes_used
-///   12: storage_bytes_cap
-///   13: dropped_segments
-///   14: dropped_bundles
-///   15: retries_scheduled
-///   16: in_flight
-const DURABLE_BUFFER_METRIC_COUNT: usize = 17;
+///   3: rejected_log_records
+///   4: rejected_metric_points
+///   5: rejected_spans
+///   6: consumed_log_records
+///   7: consumed_metric_points
+///   8: consumed_spans
+///   9: produced_log_records
+///   10: produced_metric_points
+///   11: produced_spans
+///   12: ingest_errors
+///   13: ingest_backpressure
+///   14: read_errors
+///   15: storage_bytes_used
+///   16: storage_bytes_cap
+///   17: dropped_segments
+///   18: dropped_bundles
+///   19: dropped_items
+///   20: expired_bundles
+///   21: expired_items
+///   22: retries_scheduled
+///   23: in_flight
+///   24: requeued_log_records
+///   25: requeued_metric_points
+///   26: requeued_spans
+///   27: queued_log_records
+///   28: queued_metric_points
+///   29: queued_spans
+const DURABLE_BUFFER_METRIC_COUNT: usize = 30;
 
 #[derive(Debug, Default)]
 struct CollectedMetrics {
@@ -346,8 +363,46 @@ impl CollectedMetrics {
         self.values.get(2).copied().unwrap_or(0)
     }
 
+    fn rejected_log_records(&self) -> u64 {
+        self.values.get(3).copied().unwrap_or(0)
+    }
+
+    fn rejected_metric_points(&self) -> u64 {
+        self.values.get(4).copied().unwrap_or(0)
+    }
+
+    fn rejected_spans(&self) -> u64 {
+        self.values.get(5).copied().unwrap_or(0)
+    }
+
+    fn produced_log_records(&self) -> u64 {
+        self.values.get(9).copied().unwrap_or(0)
+    }
+
+    #[allow(dead_code)] // Available for future tests with mixed signal types
+    fn produced_metric_points(&self) -> u64 {
+        self.values.get(10).copied().unwrap_or(0)
+    }
+
+    #[allow(dead_code)] // Available for future tests with mixed signal types
+    fn produced_spans(&self) -> u64 {
+        self.values.get(11).copied().unwrap_or(0)
+    }
+
     fn retries_scheduled(&self) -> u64 {
-        self.values.get(15).copied().unwrap_or(0)
+        self.values.get(22).copied().unwrap_or(0)
+    }
+
+    fn requeued_log_records(&self) -> u64 {
+        self.values.get(24).copied().unwrap_or(0)
+    }
+
+    fn requeued_metric_points(&self) -> u64 {
+        self.values.get(25).copied().unwrap_or(0)
+    }
+
+    fn requeued_spans(&self) -> u64 {
+        self.values.get(26).copied().unwrap_or(0)
     }
 }
 
@@ -872,6 +927,39 @@ fn test_durable_buffer_retries_on_nack() {
         metrics.bundles_acked() > 0,
         "Expected bundles_acked metric > 0, got {}",
         metrics.bundles_acked()
+    );
+
+    // Validate per-item metrics: transient NACKs should requeue items, not reject them.
+    // This test uses 100% logs, so only log counters should be non-zero.
+    assert!(
+        metrics.requeued_log_records() > 0,
+        "Expected requeued_log_records metric > 0 (items requeued for retry), got {}",
+        metrics.requeued_log_records()
+    );
+    assert_eq!(
+        metrics.rejected_log_records(),
+        0,
+        "Expected rejected_log_records metric = 0 (no permanent NACKs), got {}",
+        metrics.rejected_log_records()
+    );
+    assert_eq!(
+        metrics.rejected_metric_points(),
+        0,
+        "Expected rejected_metric_points metric = 0 (no metrics generated), got {}",
+        metrics.rejected_metric_points()
+    );
+    assert_eq!(
+        metrics.rejected_spans(),
+        0,
+        "Expected rejected_spans metric = 0 (no traces generated), got {}",
+        metrics.rejected_spans()
+    );
+
+    // Validate: items were produced (sent downstream)
+    assert!(
+        metrics.produced_log_records() > 0,
+        "Expected produced_log_records metric > 0 (items sent downstream), got {}",
+        metrics.produced_log_records()
     );
 }
 
@@ -1665,16 +1753,53 @@ fn test_durable_buffer_permanent_nack_rejects_without_retry() {
         metrics.bundles_acked()
     );
 
+    // Validate per-item metrics: permanent NACKs should reject items, not requeue them.
+    // This test uses 100% logs, so only log counters should be non-zero.
+    assert!(
+        metrics.rejected_log_records() > 0,
+        "Expected rejected_log_records metric > 0 (items permanently rejected), got {}",
+        metrics.rejected_log_records()
+    );
+    assert_eq!(
+        metrics.requeued_log_records(),
+        0,
+        "Expected requeued_log_records metric = 0 (permanent NACKs don't requeue), got {}",
+        metrics.requeued_log_records()
+    );
+    assert_eq!(
+        metrics.requeued_metric_points(),
+        0,
+        "Expected requeued_metric_points metric = 0 (no metrics generated), got {}",
+        metrics.requeued_metric_points()
+    );
+    assert_eq!(
+        metrics.requeued_spans(),
+        0,
+        "Expected requeued_spans metric = 0 (no traces generated), got {}",
+        metrics.requeued_spans()
+    );
+
+    // Validate: items were produced (sent downstream)
+    assert!(
+        metrics.produced_log_records() > 0,
+        "Expected produced_log_records metric > 0 (items sent downstream), got {}",
+        metrics.produced_log_records()
+    );
+
     println!(
         "permanent_nack_rejects: permanent_nacks={}, transient_nacks={}, delivered={}, \
-         metrics=[acked={}, deferred={}, permanent={}, retries={}]",
+         metrics=[acked={}, deferred={}, permanent={}, retries={}, \
+         rejected_logs={}, requeued_logs={}, produced_logs={}]",
         total_permanent_nacks,
         total_transient_nacks,
         delivered,
         metrics.bundles_acked(),
         metrics.bundles_nacked_deferred(),
         metrics.bundles_nacked_permanent(),
-        metrics.retries_scheduled()
+        metrics.retries_scheduled(),
+        metrics.rejected_log_records(),
+        metrics.requeued_log_records(),
+        metrics.produced_log_records()
     );
 }
 
@@ -1823,9 +1948,42 @@ fn test_durable_buffer_mixed_transient_and_permanent_nacks() {
         metrics.bundles_acked()
     );
 
+    // Validate per-item metrics: mixed NACKs should both reject and requeue items.
+    // This test uses 100% logs, so only log counters should be non-zero.
+    assert!(
+        metrics.rejected_log_records() > 0,
+        "Expected rejected_log_records metric > 0 (items permanently rejected in phase 2), got {}",
+        metrics.rejected_log_records()
+    );
+    assert!(
+        metrics.requeued_log_records() > 0,
+        "Expected requeued_log_records metric > 0 (items requeued in transient phase 1), got {}",
+        metrics.requeued_log_records()
+    );
+    assert_eq!(
+        metrics.rejected_metric_points(),
+        0,
+        "Expected rejected_metric_points metric = 0 (no metrics generated), got {}",
+        metrics.rejected_metric_points()
+    );
+    assert_eq!(
+        metrics.rejected_spans(),
+        0,
+        "Expected rejected_spans metric = 0 (no traces generated), got {}",
+        metrics.rejected_spans()
+    );
+
+    // Validate: items were produced (sent downstream)
+    assert!(
+        metrics.produced_log_records() > 0,
+        "Expected produced_log_records metric > 0 (items sent downstream), got {}",
+        metrics.produced_log_records()
+    );
+
     println!(
         "mixed_nacks: transient={} (total={}), permanent={} (total={}), delivered={}, \
-         metrics=[acked={}, deferred={}, permanent={}, retries={}]",
+         metrics=[acked={}, deferred={}, permanent={}, retries={}, \
+         rejected_logs={}, requeued_logs={}, produced_logs={}]",
         transient_nacks,
         total_transient,
         permanent_nacks,
@@ -1834,6 +1992,9 @@ fn test_durable_buffer_mixed_transient_and_permanent_nacks() {
         metrics.bundles_acked(),
         metrics.bundles_nacked_deferred(),
         metrics.bundles_nacked_permanent(),
-        metrics.retries_scheduled()
+        metrics.retries_scheduled(),
+        metrics.rejected_log_records(),
+        metrics.requeued_log_records(),
+        metrics.produced_log_records()
     );
 }
