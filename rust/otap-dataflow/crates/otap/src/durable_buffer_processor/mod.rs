@@ -1960,7 +1960,7 @@ mod tests {
 
         let config = DurableBufferConfig {
             path: std::path::PathBuf::from("/tmp/test-metrics"),
-            retention_size_cap: byte_unit::Byte::from_u64(1024),
+            retention_size_cap: byte_unit::Byte::from_u64(256 * 1024 * 1024), // 256 MiB
             max_age: None,
             size_cap_policy: SizeCapPolicy::Backpressure,
             poll_interval: Duration::from_millis(100),
@@ -2079,7 +2079,7 @@ mod tests {
 
         let config = DurableBufferConfig {
             path: std::path::PathBuf::from("/tmp/test-independence"),
-            retention_size_cap: byte_unit::Byte::from_u64(1024),
+            retention_size_cap: byte_unit::Byte::from_u64(256 * 1024 * 1024), // 256 MiB
             max_age: None,
             size_cap_policy: SizeCapPolicy::Backpressure,
             poll_interval: Duration::from_millis(100),
