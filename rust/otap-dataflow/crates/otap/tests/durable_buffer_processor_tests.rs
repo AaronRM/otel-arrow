@@ -622,7 +622,7 @@ struct DurableBufferMetricsSnapshot {
 impl DurableBufferMetricsSnapshot {
     /// Get a metric value by its dot-separated field name (e.g. "consumed.logs").
     fn get(&self, field: &str) -> u64 {
-        self.fields.get(field).copied().unwrap_or(0)
+        self.fields.get(field).copied().unwrap_or(u64::MAX) // Use u64::MAX to make missing fields fail assertions clearly
     }
 
     /// Assert that a metric equals an exact expected value.
