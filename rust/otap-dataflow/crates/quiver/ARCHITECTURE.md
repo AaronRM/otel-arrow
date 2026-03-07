@@ -1,4 +1,4 @@
-# Quiver - Arrow-Based Persistence for OTAP Dataflow - Architecture
+# Quiver -- Arrow-Based Persistence for OTAP Dataflow -- Architecture
 
 ## Problem Statement
 
@@ -18,6 +18,202 @@ Throughout the proposal we use **RecordBundle** to describe the logical unit
 Quiver persists. In OTAP terms this corresponds to an `OtapArrowRecords`
 value: a fixed set of payload slots (`Logs`, `LogAttrs`, `ScopeAttrs`,
 `ResourceAttrs`, etc.) that may or may not be populated for a given RecordBundle.
+
+## System Architecture Overview
+
+The following diagram shows the major components of Quiver and how data flows
+through the system from ingestion to consumption and cleanup.
+
+```mermaid
+graph TB
+    subgraph QuiverEngine["QuiverEngine (public API)"]
+        direction TB
+        API["Public API<br/>ingest / next_bundle / maintain / flush / shutdown"]
+
+        subgraph WritePath["Write Path"]
+            WAL["WalWriter<br/>(append-only log)"]
+            OS["OpenSegment<br/>(in-memory accumulator)"]
+            SA["StreamAccumulators<br/>(per slot+schema)"]
+            SW["SegmentWriter<br/>(finalizer)"]
+        end
+
+        subgraph Storage["Persistent Storage"]
+            SS["SegmentStore<br/>(.qseg files)"]
+            WF["WAL Files<br/>(wal/quiver.wal)"]
+            PF["Progress Files<br/>(quiver.sub.*)"]
+        end
+
+        subgraph ReadPath["Read / Subscribe Path"]
+            SR["SubscriberRegistry"]
+            SState["SubscriberState<br/>(per-segment bitmaps)"]
+            BH["BundleHandle<br/>(RAII ack/reject/defer)"]
+        end
+
+        Budget["DiskBudget<br/>(watermark enforcement)"]
+        Metrics["PersistenceMetrics"]
+    end
+
+    Upstream["Upstream Producer<br/>(RecordBundle)"] --> API
+    API --> WAL
+    API --> OS
+    OS --> SA
+    SA -->|finalize| SW
+    SW -->|write .qseg| SS
+    WAL -->|append entries| WF
+    SR -->|read bundles| SS
+    SR -->|persist state| PF
+    SR --> SState
+    SState --> BH
+    BH -->|ack/reject| SR
+    Budget -.->|gates ingest| API
+    Budget -.->|tracks bytes| SS
+    Budget -.->|tracks bytes| WF
+
+    Downstream["Downstream Consumer"] --> API
+    API --> SR
+```
+
+## On-Disk Directory Layout
+
+```
+<data_dir>/
+  |
+  |-- wal/
+  |     |-- quiver.wal              # Active WAL file (append-only)
+  |     |-- quiver.wal.1            # Rotated WAL (oldest)
+  |     |-- quiver.wal.2            # Rotated WAL
+  |     '-- quiver.wal.cursor       # Consumer cursor sidecar (24 bytes)
+  |
+  |-- 0000000000000000.qseg         # Finalized segment (seq 0)
+  |-- 0000000000000001.qseg         # Finalized segment (seq 1)
+  |-- 0000000000000042.qseg         # Finalized segment (seq 42)
+  |
+  |-- quiver.sub.exporter-otlp      # Subscriber progress file
+  '-- quiver.sub.backup-s3          # Subscriber progress file
+```
+
+## Data Flow Diagrams
+
+### Write Path
+
+```mermaid
+sequenceDiagram
+    participant P as Producer
+    participant E as QuiverEngine
+    participant W as WalWriter
+    participant O as OpenSegment
+    participant SW as SegmentWriter
+    participant SS as SegmentStore
+    participant R as SubscriberRegistry
+
+    P->>E: ingest(bundle)
+    E->>W: append_bundle(bundle)
+    W-->>W: serialize + CRC + write
+    W->>W: fsync (per flush policy)
+    W-->>E: WalOffset
+
+    E->>O: append(bundle)
+    O-->>O: route slots to StreamAccumulators
+
+    alt size or time threshold exceeded
+        E->>SW: write_segment(open_segment, path)
+        SW-->>SW: stream Arrow IPC + directory + manifest
+        SW->>SS: finalize .qseg file (fsync + chmod 0440)
+        E->>R: notify_segment_finalized(segment_seq)
+        E->>W: advance cursor (WAL eligible for truncation)
+    end
+
+    E-->>P: Ok(()) -- safe to ACK upstream
+```
+
+### Read Path
+
+```mermaid
+sequenceDiagram
+    participant C as Consumer
+    participant E as QuiverEngine
+    participant R as SubscriberRegistry
+    participant S as SubscriberState
+    participant SS as SegmentStore
+
+    C->>E: next_bundle(subscriber_id, timeout, cancel)
+    E->>R: next_bundle(id)
+    R->>S: find next unresolved unclaimed bundle
+    S-->>R: BundleRef(segment_seq, bundle_index)
+    R->>SS: read_bundle(bundle_ref)
+    SS-->>R: ReconstructedBundle (via mmap or read)
+    R-->>E: BundleHandle (RAII wrapper)
+    E-->>C: Ok(Some(handle))
+
+    alt success
+        C->>C: process handle.data()
+        C->>E: handle.ack()
+        E->>R: record_outcome(Acked)
+        R->>S: mark resolved in bitmap
+    else permanent failure
+        C->>E: handle.reject()
+        E->>R: record_outcome(Dropped)
+    else retry later
+        C->>E: handle.defer()
+        E->>R: release claim (returns to Pending)
+    end
+```
+
+### Startup / Recovery Flow
+
+```mermaid
+sequenceDiagram
+    participant E as QuiverEngine
+    participant SS as SegmentStore
+    participant W as WalWriter/Reader
+    participant R as SubscriberRegistry
+
+    Note over E: QuiverEngine::open() begins
+
+    E->>SS: scan data_dir for .qseg files
+    SS-->>E: ScanResult (found segments + deleted expired)
+
+    E->>W: open WAL directory
+    W-->>W: read cursor sidecar (quiver.wal.cursor)
+    W-->>W: validate WAL header (magic, version, cfg hash)
+
+    alt DurabilityMode::Wal
+        E->>W: replay WAL entries from cursor
+        W-->>W: iterate entries, verify CRC each
+        W-->>E: ReplayBundles (uncommitted entries)
+        E->>E: rebuild OpenSegment from replayed bundles
+    end
+
+    E->>R: open(config, segment_provider)
+    R-->>R: scan quiver.sub.* progress files
+    R-->>R: validate CRC, restore per-subscriber state
+    R-->>E: subscribers in PendingReregistration state
+
+    Note over E: Embedding layer registers expected subscribers
+    E->>R: register_subscriber(id) -- resumes known, starts new at latest
+    E->>R: activate_subscriber(id) -- orphan detection cutoff
+
+    Note over E: Engine ready for ingest + consume
+```
+
+### Segment Cleanup Flow
+
+```mermaid
+flowchart TD
+    M["maintain() called"] --> CheckSeg["For each finalized segment"]
+    CheckSeg --> AllAcked{"All subscribers<br/>acked all bundles?"}
+    AllAcked -->|Yes| Delete["Delete .qseg file<br/>Remove from budget"]
+    AllAcked -->|No| Keep["Keep segment"]
+    Delete --> CheckBudget{"Disk budget<br/>exceeded?"}
+    Keep --> CheckBudget
+    CheckBudget -->|No| FlushProg["Flush dirty progress files"]
+    CheckBudget -->|Yes, Backpressure| Throttle["Reject ingest<br/>(StorageAtCapacity)"]
+    CheckBudget -->|Yes, DropOldest| Evict["Evict oldest unprocessed<br/>+ synthetic Dropped outcomes"]
+    Throttle --> FlushProg
+    Evict --> FlushProg
+    FlushProg --> TruncWAL["Truncate WAL<br/>(delete covered rotated files)"]
+    TruncWAL --> Done["Done"]
+```
 
 ### Core Concepts
 
@@ -82,6 +278,25 @@ WAL entries belonging to:
 - A segment whose file/metadata durability has not been confirmed.
 
 #### WAL File Format & Rotation
+
+The WAL uses a simple append-only file structure with rotation for bounded
+disk usage:
+
+```mermaid
+flowchart LR
+    subgraph WAL["WAL Directory"]
+        direction TB
+        Active["quiver.wal<br/>(active, append target)"]
+        R1["quiver.wal.1<br/>(rotated, oldest)"]
+        R2["quiver.wal.2<br/>(rotated)"]
+        Cursor["quiver.wal.cursor<br/>(24B sidecar)"]
+    end
+
+    Write["append_bundle()"] -->|append| Active
+    Active -->|rotation trigger<br/>rename + reopen| R2
+    Cursor -->|tracks safe<br/>truncation point| R1
+    R1 -->|cursor past span| Delete["delete"]
+```
 
 - **Single append-only file per core**: each persistence instance writes to
   `wal/quiver.wal`, rolling into numbered siblings (`.1`, `.2`, ...) only when
@@ -372,14 +587,15 @@ the embedding layer decides when and how to read the data.
 
 **Bundle Lifecycle**: Each bundle transitions through well-defined states:
 
-```text
-                  +---> Acked (terminal, logged)
-                  |
-Pending --> Claimed
-                  |
-                  +---> Rejected (terminal, logged as Dropped)
-                  |
-                  +---> Pending (via defer or implicit drop)
+```mermaid
+stateDiagram-v2
+    [*] --> Pending : segment finalized
+    Pending --> Claimed : next_bundle() / claim_bundle()
+    Claimed --> Acked : handle.ack()
+    Claimed --> Rejected : handle.reject()
+    Claimed --> Pending : handle.defer() / handle dropped
+    Acked --> [*] : terminal
+    Rejected --> [*] : terminal (logged as Dropped)
 ```
 
 - **Pending**: Available for consumption via `next_bundle()`.
@@ -422,6 +638,41 @@ past the segment to be deleted.
 
 Quiver is a standalone persistence library with no knowledge of the embedding
 pipeline's control flow semantics. Responsibilities are split as follows:
+
+#### Rust Module Map
+
+The crate is organized into the following modules (corresponding to the
+subsystems described above):
+
+```
+quiver (lib.rs)
+  |-- engine         QuiverEngine, QuiverEngineBuilder -- entry point
+  |-- config         QuiverConfig, DurabilityMode, WalConfig, SegmentConfig, RetentionConfig
+  |-- budget         DiskBudget -- watermark capacity enforcement
+  |-- record_bundle  RecordBundle trait, SlotId, SchemaFingerprint, BundleDescriptor
+  |-- error          QuiverError, Result
+  |-- wal/
+  |     |-- writer   WalWriter -- async append + rotation
+  |     |-- reader   WalReader, MultiFileWalReader -- replay for recovery
+  |     |-- header   WAL file header encoding
+  |     |-- cursor_sidecar  Consumer cursor persistence
+  |     '-- replay   ReplayBundle -- decoded WAL entry
+  |-- segment/
+  |     |-- types    SegmentSeq, StreamId, ChunkIndex, StreamKey, ManifestEntry
+  |     |-- open_segment     OpenSegment -- in-memory accumulator
+  |     |-- stream_accumulator  StreamAccumulator -- per (slot,schema) buffer
+  |     |-- writer   SegmentWriter -- finalize to .qseg
+  |     '-- reader   SegmentReader -- read via mmap or standard I/O
+  |-- segment_store  SegmentStore -- manages .qseg files on disk
+  |-- subscriber/
+  |     |-- registry SubscriberRegistry -- lifecycle + coordination
+  |     |-- state    SubscriberState, SegmentProgress -- per-subscriber tracking
+  |     |-- handle   BundleHandle -- RAII ack/reject/defer
+  |     |-- progress SubscriberProgress -- binary file read/write
+  |     '-- types    SubscriberId, BundleRef, BundleIndex, AckOutcome
+  |-- telemetry      PersistenceMetrics
+  '-- logging        Structured logging macros
+```
 
 | Concern | Quiver (Library) | Embedding Layer (e.g., durable_buffer_processor) |
 | ------- | ---------------- | --------------------------------------------- |
@@ -535,6 +786,19 @@ config.durability = DurabilityMode::SegmentOnly;
 ### Subscriber Lifecycle
 
 Quiver supports dynamic subscriber management with explicit registration.
+
+```mermaid
+stateDiagram-v2
+    [*] --> PendingReregistration : startup (progress file found)
+    [*] --> Registered : register(id) -- new subscriber
+    PendingReregistration --> Registered : register(id) -- resume
+    PendingReregistration --> Orphaned : activate() without register
+    Registered --> Active : activate()
+    Active --> Active : consuming bundles
+    Active --> Unregistered : unregister(id)
+    Unregistered --> [*] : progress file deleted
+    Orphaned --> [*] : manual cleanup
+```
 
 #### Registration
 
@@ -1030,7 +1294,31 @@ sequenceDiagram
 
 ### Retention & Size Cap Policy
 
-Quiver keeps disk usage low with two layers of cleanup:
+Quiver keeps disk usage low with two layers of cleanup. The `DiskBudget`
+enforces capacity using a watermark model:
+
+```
+Disk Usage
+  |
+  |================================================= hard_cap
+  |  [headroom: 1 segment_target_size]
+  |  (reserved for in-flight finalization)
+  |================================================= soft_cap  <-- ingest gate
+  |
+  |  +------+  +------+  +------+  +------+
+  |  |seg 0 |  |seg 1 |  |seg 2 |  | WAL  |
+  |  +------+  +------+  +------+  +------+
+  |
+  |  <-- used (tracked via AtomicU64) -->
+  |
+  0 ------------------------------------------------ (empty)
+
+  When used > soft_cap:
+    Backpressure  --> ingest() returns StorageAtCapacity
+    DropOldest    --> evict oldest segments (synthetic Dropped outcomes)
+```
+
+Two layers of cleanup:
 
 - **Steady-state cleanup** (runs continuously): when a segment's outstanding count
   drops to zero, it is queued for deletion. Each core drains its queue during the
