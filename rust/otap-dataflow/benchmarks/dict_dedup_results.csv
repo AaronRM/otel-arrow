@@ -1,0 +1,613 @@
+test_case,strategy,time_us,time_us_stddev,dict_len,key_widened,native_fallback,ipc_bytes
+Utf8/U8 nb=2 card=10 ovl=0%,concat,0.9,0.2,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=0%,dedup,3.9,0.2,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=0%,threshold,1.0,0.1,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=0%,selective,3.9,0.2,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=50%,concat,0.9,0.1,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=50%,dedup,3.4,0.1,15,false,false,1922
+Utf8/U8 nb=2 card=10 ovl=50%,threshold,0.9,0.1,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=50%,selective,3.3,0.1,15,false,false,1922
+Utf8/U8 nb=2 card=10 ovl=90%,concat,0.9,0.1,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=90%,dedup,2.7,0.1,11,false,false,1858
+Utf8/U8 nb=2 card=10 ovl=90%,threshold,0.9,0.1,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=90%,selective,2.7,0.1,11,false,false,1858
+Utf8/U8 nb=2 card=10 ovl=100%,concat,0.9,0.1,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=100%,dedup,4.4,7.5,10,false,false,1858
+Utf8/U8 nb=2 card=10 ovl=100%,threshold,0.9,0.1,20,false,false,2114
+Utf8/U8 nb=2 card=10 ovl=100%,selective,2.7,0.2,10,false,false,1858
+Utf8/U8 nb=2 card=100 ovl=0%,concat,1.1,0.3,121,false,false,5058
+Utf8/U8 nb=2 card=100 ovl=0%,dedup,20.1,1.5,121,false,false,5058
+Utf8/U8 nb=2 card=100 ovl=0%,threshold,1.0,0.1,121,false,false,5058
+Utf8/U8 nb=2 card=100 ovl=0%,selective,20.1,3.3,121,false,false,5058
+Utf8/U8 nb=2 card=100 ovl=50%,concat,1.0,0.1,129,false,false,5250
+Utf8/U8 nb=2 card=100 ovl=50%,dedup,16.0,0.9,110,false,false,4738
+Utf8/U8 nb=2 card=100 ovl=50%,threshold,1.0,0.1,129,false,false,5250
+Utf8/U8 nb=2 card=100 ovl=50%,selective,15.5,0.7,110,false,false,4738
+Utf8/U8 nb=2 card=100 ovl=90%,concat,1.0,0.1,122,false,false,4994
+Utf8/U8 nb=2 card=100 ovl=90%,dedup,14.8,0.9,89,false,false,4162
+Utf8/U8 nb=2 card=100 ovl=90%,threshold,1.0,0.1,122,false,false,4994
+Utf8/U8 nb=2 card=100 ovl=90%,selective,14.2,0.9,89,false,false,4162
+Utf8/U8 nb=2 card=100 ovl=100%,concat,1.1,0.3,127,false,false,5186
+Utf8/U8 nb=2 card=100 ovl=100%,dedup,14.1,2.0,85,false,false,4034
+Utf8/U8 nb=2 card=100 ovl=100%,threshold,1.0,0.1,127,false,false,5186
+Utf8/U8 nb=2 card=100 ovl=100%,selective,14.2,1.4,85,false,false,4034
+Utf8/U8 nb=2 card=256 ovl=0%,concat,1.0,0.2,162,false,false,6274
+Utf8/U8 nb=2 card=256 ovl=0%,dedup,24.3,2.1,162,false,false,6274
+Utf8/U8 nb=2 card=256 ovl=0%,threshold,1.0,0.1,162,false,false,6274
+Utf8/U8 nb=2 card=256 ovl=0%,selective,23.8,1.5,162,false,false,6274
+Utf8/U8 nb=2 card=256 ovl=50%,concat,1.2,0.3,164,false,false,6274
+Utf8/U8 nb=2 card=256 ovl=50%,dedup,22.8,1.7,146,false,false,5826
+Utf8/U8 nb=2 card=256 ovl=50%,threshold,1.0,0.1,164,false,false,6274
+Utf8/U8 nb=2 card=256 ovl=50%,selective,22.6,2.2,146,false,false,5826
+Utf8/U8 nb=2 card=256 ovl=90%,concat,1.0,0.1,166,false,false,6338
+Utf8/U8 nb=2 card=256 ovl=90%,dedup,21.9,0.6,146,false,false,5762
+Utf8/U8 nb=2 card=256 ovl=90%,threshold,1.0,0.1,166,false,false,6338
+Utf8/U8 nb=2 card=256 ovl=90%,selective,21.8,0.2,146,false,false,5762
+Utf8/U8 nb=2 card=256 ovl=100%,concat,1.0,0.1,165,false,false,6338
+Utf8/U8 nb=2 card=256 ovl=100%,dedup,21.8,2.0,139,false,false,5570
+Utf8/U8 nb=2 card=256 ovl=100%,threshold,1.0,0.1,165,false,false,6338
+Utf8/U8 nb=2 card=256 ovl=100%,selective,21.2,1.0,139,false,false,5570
+Utf8/U8 nb=2 card=1000 ovl=0%,concat,1.0,0.1,189,false,false,7042
+Utf8/U8 nb=2 card=1000 ovl=0%,dedup,26.7,2.0,189,false,false,7042
+Utf8/U8 nb=2 card=1000 ovl=0%,threshold,1.0,0.1,189,false,false,7042
+Utf8/U8 nb=2 card=1000 ovl=0%,selective,25.9,1.6,189,false,false,7042
+Utf8/U8 nb=2 card=1000 ovl=50%,concat,1.0,0.1,185,false,false,6786
+Utf8/U8 nb=2 card=1000 ovl=50%,dedup,35.5,6.3,178,false,false,6658
+Utf8/U8 nb=2 card=1000 ovl=50%,threshold,1.7,0.1,185,false,false,6786
+Utf8/U8 nb=2 card=1000 ovl=50%,selective,36.8,0.6,178,false,false,6658
+Utf8/U8 nb=2 card=1000 ovl=90%,concat,1.7,0.1,188,false,false,6850
+Utf8/U8 nb=2 card=1000 ovl=90%,dedup,38.3,6.7,181,false,false,6722
+Utf8/U8 nb=2 card=1000 ovl=90%,threshold,1.7,0.1,188,false,false,6850
+Utf8/U8 nb=2 card=1000 ovl=90%,selective,37.3,2.7,181,false,false,6722
+Utf8/U8 nb=2 card=1000 ovl=100%,concat,1.6,0.1,188,false,false,6978
+Utf8/U8 nb=2 card=1000 ovl=100%,dedup,37.5,2.9,180,false,false,6786
+Utf8/U8 nb=2 card=1000 ovl=100%,threshold,1.7,0.1,188,false,false,6978
+Utf8/U8 nb=2 card=1000 ovl=100%,selective,36.6,0.4,180,false,false,6786
+Utf8/U8 nb=2 card=5000 ovl=0%,concat,1.7,0.1,195,false,false,7554
+Utf8/U8 nb=2 card=5000 ovl=0%,dedup,39.6,3.0,195,false,false,7554
+Utf8/U8 nb=2 card=5000 ovl=0%,threshold,1.7,0.1,195,false,false,7554
+Utf8/U8 nb=2 card=5000 ovl=0%,selective,40.3,5.5,195,false,false,7554
+Utf8/U8 nb=2 card=5000 ovl=50%,concat,1.8,0.1,195,false,false,7426
+Utf8/U8 nb=2 card=5000 ovl=50%,dedup,39.0,2.8,194,false,false,7362
+Utf8/U8 nb=2 card=5000 ovl=50%,threshold,1.7,0.1,195,false,false,7426
+Utf8/U8 nb=2 card=5000 ovl=50%,selective,39.1,2.6,194,false,false,7362
+Utf8/U8 nb=2 card=5000 ovl=90%,concat,1.0,0.1,197,false,false,7298
+Utf8/U8 nb=2 card=5000 ovl=90%,dedup,28.1,5.0,195,false,false,7234
+Utf8/U8 nb=2 card=5000 ovl=90%,threshold,1.0,0.1,197,false,false,7298
+Utf8/U8 nb=2 card=5000 ovl=90%,selective,27.2,1.2,195,false,false,7234
+Utf8/U8 nb=2 card=5000 ovl=100%,concat,1.0,0.1,197,false,false,7554
+Utf8/U8 nb=2 card=5000 ovl=100%,dedup,26.8,1.4,194,false,false,7490
+Utf8/U8 nb=2 card=5000 ovl=100%,threshold,1.0,0.1,197,false,false,7554
+Utf8/U8 nb=2 card=5000 ovl=100%,selective,26.6,1.1,194,false,false,7490
+Utf8/U8 nb=5 card=10 ovl=0%,concat,2.1,0.3,50,false,false,4234
+Utf8/U8 nb=5 card=10 ovl=0%,dedup,9.5,2.3,50,false,false,4234
+Utf8/U8 nb=5 card=10 ovl=0%,threshold,2.1,0.5,50,false,false,4234
+Utf8/U8 nb=5 card=10 ovl=0%,selective,8.9,0.3,50,false,false,4234
+Utf8/U8 nb=5 card=10 ovl=50%,concat,2.1,0.4,50,false,false,4170
+Utf8/U8 nb=5 card=10 ovl=50%,dedup,7.2,0.2,30,false,false,3594
+Utf8/U8 nb=5 card=10 ovl=50%,threshold,2.0,0.2,50,false,false,4170
+Utf8/U8 nb=5 card=10 ovl=50%,selective,7.3,0.2,30,false,false,3594
+Utf8/U8 nb=5 card=10 ovl=90%,concat,2.0,0.2,50,false,false,4106
+Utf8/U8 nb=5 card=10 ovl=90%,dedup,4.9,0.2,14,false,false,3146
+Utf8/U8 nb=5 card=10 ovl=90%,threshold,2.0,0.1,50,false,false,4106
+Utf8/U8 nb=5 card=10 ovl=90%,selective,5.0,0.5,14,false,false,3146
+Utf8/U8 nb=5 card=10 ovl=100%,concat,2.2,0.4,50,false,false,4106
+Utf8/U8 nb=5 card=10 ovl=100%,dedup,7.6,13.0,10,false,false,3082
+Utf8/U8 nb=5 card=10 ovl=100%,threshold,2.0,0.1,50,false,false,4106
+Utf8/U8 nb=5 card=10 ovl=100%,selective,4.5,0.2,10,false,false,3082
+Utf8/U8 nb=5 card=100 ovl=0%,concat,2.2,0.3,314,true,false,12362
+Utf8/U8 nb=5 card=100 ovl=0%,dedup,47.0,6.5,314,true,false,12362
+Utf8/U8 nb=5 card=100 ovl=0%,threshold,45.6,0.9,314,true,false,12362
+Utf8/U8 nb=5 card=100 ovl=0%,selective,48.3,7.1,314,true,false,12362
+Utf8/U8 nb=5 card=100 ovl=50%,concat,2.2,0.3,311,true,false,12170
+Utf8/U8 nb=5 card=100 ovl=50%,dedup,31.3,0.8,203,false,false,8586
+Utf8/U8 nb=5 card=100 ovl=50%,threshold,31.8,2.5,203,false,false,8586
+Utf8/U8 nb=5 card=100 ovl=50%,selective,30.5,0.3,203,false,false,8586
+Utf8/U8 nb=5 card=100 ovl=90%,concat,2.3,0.2,319,true,false,12426
+Utf8/U8 nb=5 card=100 ovl=90%,dedup,28.2,8.5,124,false,false,6282
+Utf8/U8 nb=5 card=100 ovl=90%,threshold,24.9,1.2,124,false,false,6282
+Utf8/U8 nb=5 card=100 ovl=90%,selective,24.8,1.2,124,false,false,6282
+Utf8/U8 nb=5 card=100 ovl=100%,concat,2.3,0.3,315,true,false,12362
+Utf8/U8 nb=5 card=100 ovl=100%,dedup,25.0,19.5,99,false,false,5642
+Utf8/U8 nb=5 card=100 ovl=100%,threshold,21.4,3.5,99,false,false,5642
+Utf8/U8 nb=5 card=100 ovl=100%,selective,21.7,3.1,99,false,false,5642
+Utf8/U8 nb=5 card=256 ovl=0%,concat,2.8,1.6,420,true,false,15562
+Utf8/U8 nb=5 card=256 ovl=0%,dedup,57.3,2.4,420,true,false,15562
+Utf8/U8 nb=5 card=256 ovl=0%,threshold,60.7,15.3,420,true,false,15562
+Utf8/U8 nb=5 card=256 ovl=0%,selective,58.8,9.4,420,true,false,15562
+Utf8/U8 nb=5 card=256 ovl=50%,concat,2.4,0.3,412,true,false,14986
+Utf8/U8 nb=5 card=256 ovl=50%,dedup,53.9,15.6,316,true,false,12362
+Utf8/U8 nb=5 card=256 ovl=50%,threshold,50.0,0.6,316,true,false,12362
+Utf8/U8 nb=5 card=256 ovl=50%,selective,49.6,0.5,316,true,false,12362
+Utf8/U8 nb=5 card=256 ovl=90%,concat,2.4,0.3,417,true,false,15562
+Utf8/U8 nb=5 card=256 ovl=90%,dedup,45.0,4.4,235,false,false,9546
+Utf8/U8 nb=5 card=256 ovl=90%,threshold,44.6,4.1,235,false,false,9546
+Utf8/U8 nb=5 card=256 ovl=90%,selective,43.3,3.6,235,false,false,9546
+Utf8/U8 nb=5 card=256 ovl=100%,concat,2.5,0.4,416,true,false,15434
+Utf8/U8 nb=5 card=256 ovl=100%,dedup,36.7,1.4,219,false,false,9098
+Utf8/U8 nb=5 card=256 ovl=100%,threshold,35.2,1.3,219,false,false,9098
+Utf8/U8 nb=5 card=256 ovl=100%,selective,36.6,1.9,219,false,false,9098
+Utf8/U8 nb=5 card=1000 ovl=0%,concat,2.4,0.2,474,true,false,17802
+Utf8/U8 nb=5 card=1000 ovl=0%,dedup,78.5,16.6,474,true,false,17802
+Utf8/U8 nb=5 card=1000 ovl=0%,threshold,75.2,4.6,474,true,false,17802
+Utf8/U8 nb=5 card=1000 ovl=0%,selective,75.7,7.5,474,true,false,17802
+Utf8/U8 nb=5 card=1000 ovl=50%,concat,2.6,0.2,479,true,false,17610
+Utf8/U8 nb=5 card=1000 ovl=50%,dedup,63.1,4.9,431,true,false,16138
+Utf8/U8 nb=5 card=1000 ovl=50%,threshold,62.3,3.6,431,true,false,16138
+Utf8/U8 nb=5 card=1000 ovl=50%,selective,62.3,3.9,431,true,false,16138
+Utf8/U8 nb=5 card=1000 ovl=90%,concat,2.5,0.2,479,true,false,17290
+Utf8/U8 nb=5 card=1000 ovl=90%,dedup,59.6,6.2,413,true,false,15370
+Utf8/U8 nb=5 card=1000 ovl=90%,threshold,58.3,2.2,413,true,false,15370
+Utf8/U8 nb=5 card=1000 ovl=90%,selective,58.8,1.7,413,true,false,15370
+Utf8/U8 nb=5 card=1000 ovl=100%,concat,2.5,0.3,475,true,false,17162
+Utf8/U8 nb=5 card=1000 ovl=100%,dedup,61.4,17.8,400,true,false,15114
+Utf8/U8 nb=5 card=1000 ovl=100%,threshold,58.0,5.8,400,true,false,15114
+Utf8/U8 nb=5 card=1000 ovl=100%,selective,77.2,59.7,400,true,false,15114
+Utf8/U8 nb=5 card=5000 ovl=0%,concat,2.7,0.2,497,true,false,18762
+Utf8/U8 nb=5 card=5000 ovl=0%,dedup,82.9,17.9,497,true,false,18762
+Utf8/U8 nb=5 card=5000 ovl=0%,threshold,75.2,0.7,497,true,false,18762
+Utf8/U8 nb=5 card=5000 ovl=0%,selective,77.2,4.4,497,true,false,18762
+Utf8/U8 nb=5 card=5000 ovl=50%,concat,2.6,0.3,493,true,false,18506
+Utf8/U8 nb=5 card=5000 ovl=50%,dedup,75.7,4.1,486,true,false,18378
+Utf8/U8 nb=5 card=5000 ovl=50%,threshold,75.5,2.5,486,true,false,18378
+Utf8/U8 nb=5 card=5000 ovl=50%,selective,76.2,4.8,486,true,false,18378
+Utf8/U8 nb=5 card=5000 ovl=90%,concat,2.6,0.2,498,true,false,18250
+Utf8/U8 nb=5 card=5000 ovl=90%,dedup,75.6,2.3,480,true,false,17674
+Utf8/U8 nb=5 card=5000 ovl=90%,threshold,75.0,2.1,480,true,false,17674
+Utf8/U8 nb=5 card=5000 ovl=90%,selective,88.0,25.2,480,true,false,17674
+Utf8/U8 nb=5 card=5000 ovl=100%,concat,4.3,8.2,491,true,false,18186
+Utf8/U8 nb=5 card=5000 ovl=100%,dedup,79.8,4.3,468,true,false,17482
+Utf8/U8 nb=5 card=5000 ovl=100%,threshold,77.5,3.0,468,true,false,17482
+Utf8/U8 nb=5 card=5000 ovl=100%,selective,74.3,2.4,468,true,false,17482
+Utf8/U8 nb=10 card=10 ovl=0%,concat,4.2,1.6,100,false,false,7682
+Utf8/U8 nb=10 card=10 ovl=0%,dedup,17.7,0.5,100,false,false,7682
+Utf8/U8 nb=10 card=10 ovl=0%,threshold,3.7,0.3,100,false,false,7682
+Utf8/U8 nb=10 card=10 ovl=0%,selective,18.0,1.5,100,false,false,7682
+Utf8/U8 nb=10 card=10 ovl=50%,concat,4.4,1.9,100,false,false,7554
+Utf8/U8 nb=10 card=10 ovl=50%,dedup,13.2,0.3,55,false,false,6338
+Utf8/U8 nb=10 card=10 ovl=50%,threshold,4.0,0.7,100,false,false,7554
+Utf8/U8 nb=10 card=10 ovl=50%,selective,13.0,0.8,55,false,false,6338
+Utf8/U8 nb=10 card=10 ovl=90%,concat,3.8,0.3,100,false,false,7426
+Utf8/U8 nb=10 card=10 ovl=90%,dedup,9.1,0.3,19,false,false,5314
+Utf8/U8 nb=10 card=10 ovl=90%,threshold,4.0,0.3,100,false,false,7426
+Utf8/U8 nb=10 card=10 ovl=90%,selective,9.2,0.7,19,false,false,5314
+Utf8/U8 nb=10 card=10 ovl=100%,concat,3.8,0.3,100,false,false,7362
+Utf8/U8 nb=10 card=10 ovl=100%,dedup,7.8,0.3,10,false,false,5122
+Utf8/U8 nb=10 card=10 ovl=100%,threshold,3.8,0.2,100,false,false,7362
+Utf8/U8 nb=10 card=10 ovl=100%,selective,7.8,0.3,10,false,false,5122
+Utf8/U8 nb=10 card=100 ovl=0%,concat,4.3,0.3,615,true,false,23874
+Utf8/U8 nb=10 card=100 ovl=0%,dedup,91.0,3.2,615,true,false,23874
+Utf8/U8 nb=10 card=100 ovl=0%,threshold,90.0,2.4,615,true,false,23874
+Utf8/U8 nb=10 card=100 ovl=0%,selective,93.8,10.6,615,true,false,23874
+Utf8/U8 nb=10 card=100 ovl=50%,concat,4.8,1.9,622,true,false,23682
+Utf8/U8 nb=10 card=100 ovl=50%,dedup,60.9,1.2,369,true,false,16706
+Utf8/U8 nb=10 card=100 ovl=50%,threshold,60.5,1.7,369,true,false,16706
+Utf8/U8 nb=10 card=100 ovl=50%,selective,62.7,2.9,369,true,false,16706
+Utf8/U8 nb=10 card=100 ovl=90%,concat,4.1,0.3,641,true,false,24066
+Utf8/U8 nb=10 card=100 ovl=90%,dedup,37.2,2.1,153,false,false,9218
+Utf8/U8 nb=10 card=100 ovl=90%,threshold,38.6,6.3,153,false,false,9218
+Utf8/U8 nb=10 card=100 ovl=90%,selective,36.4,0.9,153,false,false,9218
+Utf8/U8 nb=10 card=100 ovl=100%,concat,4.1,0.3,633,true,false,24130
+Utf8/U8 nb=10 card=100 ovl=100%,dedup,30.0,1.0,100,false,false,7682
+Utf8/U8 nb=10 card=100 ovl=100%,threshold,30.8,2.6,100,false,false,7682
+Utf8/U8 nb=10 card=100 ovl=100%,selective,31.0,4.3,100,false,false,7682
+Utf8/U8 nb=10 card=256 ovl=0%,concat,4.6,0.6,846,true,false,31234
+Utf8/U8 nb=10 card=256 ovl=0%,dedup,141.1,31.2,846,true,false,31234
+Utf8/U8 nb=10 card=256 ovl=0%,threshold,115.8,2.8,846,true,false,31234
+Utf8/U8 nb=10 card=256 ovl=0%,selective,115.2,4.0,846,true,false,31234
+Utf8/U8 nb=10 card=256 ovl=50%,concat,4.2,0.4,826,true,false,30210
+Utf8/U8 nb=10 card=256 ovl=50%,dedup,92.8,4.3,535,true,false,21826
+Utf8/U8 nb=10 card=256 ovl=50%,threshold,91.9,2.2,535,true,false,21826
+Utf8/U8 nb=10 card=256 ovl=50%,selective,99.3,24.1,535,true,false,21826
+Utf8/U8 nb=10 card=256 ovl=90%,concat,5.1,2.1,830,true,false,29826
+Utf8/U8 nb=10 card=256 ovl=90%,dedup,68.0,10.0,312,true,false,15170
+Utf8/U8 nb=10 card=256 ovl=90%,threshold,67.8,11.4,312,true,false,15170
+Utf8/U8 nb=10 card=256 ovl=90%,selective,66.8,7.1,312,true,false,15170
+Utf8/U8 nb=10 card=256 ovl=100%,concat,4.5,0.4,836,true,false,29954
+Utf8/U8 nb=10 card=256 ovl=100%,dedup,60.5,6.9,254,false,false,12162
+Utf8/U8 nb=10 card=256 ovl=100%,threshold,59.3,6.9,254,false,false,12162
+Utf8/U8 nb=10 card=256 ovl=100%,selective,58.3,5.7,254,false,false,12162
+Utf8/U8 nb=10 card=1000 ovl=0%,concat,4.6,0.6,958,true,false,35266
+Utf8/U8 nb=10 card=1000 ovl=0%,dedup,162.9,33.6,958,true,false,35266
+Utf8/U8 nb=10 card=1000 ovl=0%,threshold,167.1,38.9,958,true,false,35266
+Utf8/U8 nb=10 card=1000 ovl=0%,selective,147.8,2.9,958,true,false,35266
+Utf8/U8 nb=10 card=1000 ovl=50%,concat,4.9,0.5,958,true,false,34114
+Utf8/U8 nb=10 card=1000 ovl=50%,dedup,115.3,3.4,788,true,false,29378
+Utf8/U8 nb=10 card=1000 ovl=50%,threshold,114.9,2.5,788,true,false,29378
+Utf8/U8 nb=10 card=1000 ovl=50%,selective,119.6,10.1,788,true,false,29378
+Utf8/U8 nb=10 card=1000 ovl=90%,concat,4.8,0.4,952,true,false,33410
+Utf8/U8 nb=10 card=1000 ovl=90%,dedup,107.1,5.8,659,true,false,25154
+Utf8/U8 nb=10 card=1000 ovl=90%,threshold,105.1,1.9,659,true,false,25154
+Utf8/U8 nb=10 card=1000 ovl=90%,selective,106.2,3.3,659,true,false,25154
+Utf8/U8 nb=10 card=1000 ovl=100%,concat,4.8,0.3,947,true,false,33602
+Utf8/U8 nb=10 card=1000 ovl=100%,dedup,106.6,5.4,633,true,false,24450
+Utf8/U8 nb=10 card=1000 ovl=100%,threshold,104.5,5.8,633,true,false,24450
+Utf8/U8 nb=10 card=1000 ovl=100%,selective,108.0,8.6,633,true,false,24450
+Utf8/U8 nb=10 card=5000 ovl=0%,concat,4.6,0.4,986,true,false,36610
+Utf8/U8 nb=10 card=5000 ovl=0%,dedup,153.4,3.7,986,true,false,36610
+Utf8/U8 nb=10 card=5000 ovl=0%,threshold,160.5,18.5,986,true,false,36610
+Utf8/U8 nb=10 card=5000 ovl=0%,selective,153.5,4.0,986,true,false,36610
+Utf8/U8 nb=10 card=5000 ovl=50%,concat,4.9,0.3,987,true,false,35906
+Utf8/U8 nb=10 card=5000 ovl=50%,dedup,167.7,22.3,944,true,false,34690
+Utf8/U8 nb=10 card=5000 ovl=50%,threshold,158.0,19.4,944,true,false,34690
+Utf8/U8 nb=10 card=5000 ovl=50%,selective,153.4,7.2,944,true,false,34690
+Utf8/U8 nb=10 card=5000 ovl=90%,concat,5.0,0.3,990,true,false,35394
+Utf8/U8 nb=10 card=5000 ovl=90%,dedup,151.0,6.2,926,true,false,33538
+Utf8/U8 nb=10 card=5000 ovl=90%,threshold,155.0,24.6,926,true,false,33538
+Utf8/U8 nb=10 card=5000 ovl=90%,selective,157.5,15.0,926,true,false,33538
+Utf8/U8 nb=10 card=5000 ovl=100%,concat,4.3,0.3,988,true,false,35778
+Utf8/U8 nb=10 card=5000 ovl=100%,dedup,149.6,7.5,902,true,false,33090
+Utf8/U8 nb=10 card=5000 ovl=100%,threshold,147.4,4.7,902,true,false,33090
+Utf8/U8 nb=10 card=5000 ovl=100%,selective,147.1,2.9,902,true,false,33090
+Utf8/U8 nb=20 card=10 ovl=0%,concat,8.4,1.8,200,false,false,14706
+Utf8/U8 nb=20 card=10 ovl=0%,dedup,36.6,1.8,200,false,false,14706
+Utf8/U8 nb=20 card=10 ovl=0%,threshold,15.5,19.9,200,false,false,14706
+Utf8/U8 nb=20 card=10 ovl=0%,selective,36.4,0.8,200,false,false,14706
+Utf8/U8 nb=20 card=10 ovl=50%,concat,7.6,0.4,200,false,false,14450
+Utf8/U8 nb=20 card=10 ovl=50%,dedup,26.1,0.6,105,false,false,11954
+Utf8/U8 nb=20 card=10 ovl=50%,threshold,7.8,0.5,200,false,false,14450
+Utf8/U8 nb=20 card=10 ovl=50%,selective,28.5,6.1,105,false,false,11954
+Utf8/U8 nb=20 card=10 ovl=90%,concat,7.8,0.5,200,false,false,14066
+Utf8/U8 nb=20 card=10 ovl=90%,dedup,17.9,0.4,29,false,false,9714
+Utf8/U8 nb=20 card=10 ovl=90%,threshold,7.8,0.5,200,false,false,14066
+Utf8/U8 nb=20 card=10 ovl=90%,selective,18.4,2.1,29,false,false,9714
+Utf8/U8 nb=20 card=10 ovl=100%,concat,7.8,0.2,200,false,false,13938
+Utf8/U8 nb=20 card=10 ovl=100%,dedup,15.0,0.3,10,false,false,9202
+Utf8/U8 nb=20 card=10 ovl=100%,threshold,7.5,0.3,200,false,false,13938
+Utf8/U8 nb=20 card=10 ovl=100%,selective,15.8,5.3,10,false,false,9202
+Utf8/U8 nb=20 card=100 ovl=0%,concat,8.4,0.4,1257,true,false,48626
+Utf8/U8 nb=20 card=100 ovl=0%,dedup,187.3,6.3,1257,true,false,48626
+Utf8/U8 nb=20 card=100 ovl=0%,threshold,229.2,80.4,1257,true,false,48626
+Utf8/U8 nb=20 card=100 ovl=0%,selective,184.1,8.0,1257,true,false,48626
+Utf8/U8 nb=20 card=100 ovl=50%,concat,8.3,0.3,1262,true,false,47090
+Utf8/U8 nb=20 card=100 ovl=50%,dedup,120.9,4.1,682,true,false,31154
+Utf8/U8 nb=20 card=100 ovl=50%,threshold,121.4,5.2,682,true,false,31154
+Utf8/U8 nb=20 card=100 ovl=50%,selective,154.1,57.1,682,true,false,31154
+Utf8/U8 nb=20 card=100 ovl=90%,concat,8.1,0.2,1251,true,false,46386
+Utf8/U8 nb=20 card=100 ovl=90%,dedup,66.8,15.5,206,false,false,14834
+Utf8/U8 nb=20 card=100 ovl=90%,threshold,60.6,2.5,206,false,false,14834
+Utf8/U8 nb=20 card=100 ovl=90%,selective,60.6,2.8,206,false,false,14834
+Utf8/U8 nb=20 card=100 ovl=100%,concat,8.2,0.4,1258,true,false,47154
+Utf8/U8 nb=20 card=100 ovl=100%,dedup,54.4,14.2,100,false,false,11762
+Utf8/U8 nb=20 card=100 ovl=100%,threshold,49.8,2.3,100,false,false,11762
+Utf8/U8 nb=20 card=100 ovl=100%,selective,49.0,1.1,100,false,false,11762
+Utf8/U8 nb=20 card=256 ovl=0%,concat,8.4,0.3,1635,true,false,60338
+Utf8/U8 nb=20 card=256 ovl=0%,dedup,239.5,13.5,1635,true,false,60338
+Utf8/U8 nb=20 card=256 ovl=0%,threshold,228.0,4.7,1635,true,false,60338
+Utf8/U8 nb=20 card=256 ovl=0%,selective,225.3,3.3,1635,true,false,60338
+Utf8/U8 nb=20 card=256 ovl=50%,concat,8.4,0.3,1649,true,false,60018
+Utf8/U8 nb=20 card=256 ovl=50%,dedup,183.2,9.8,934,true,false,39218
+Utf8/U8 nb=20 card=256 ovl=50%,threshold,178.1,3.5,934,true,false,39218
+Utf8/U8 nb=20 card=256 ovl=50%,selective,178.4,4.0,934,true,false,39218
+Utf8/U8 nb=20 card=256 ovl=90%,concat,8.6,0.3,1673,true,false,59314
+Utf8/U8 nb=20 card=256 ovl=90%,dedup,99.8,3.8,391,true,false,22642
+Utf8/U8 nb=20 card=256 ovl=90%,threshold,96.6,2.8,391,true,false,22642
+Utf8/U8 nb=20 card=256 ovl=90%,selective,98.5,4.1,391,true,false,22642
+Utf8/U8 nb=20 card=256 ovl=100%,concat,8.7,0.4,1672,true,false,59698
+Utf8/U8 nb=20 card=256 ovl=100%,dedup,90.1,9.4,256,false,false,16370
+Utf8/U8 nb=20 card=256 ovl=100%,threshold,86.7,4.0,256,false,false,16370
+Utf8/U8 nb=20 card=256 ovl=100%,selective,90.8,13.2,256,false,false,16370
+Utf8/U8 nb=20 card=1000 ovl=0%,concat,9.2,1.2,1904,true,false,69426
+Utf8/U8 nb=20 card=1000 ovl=0%,dedup,328.2,89.7,1904,true,false,69426
+Utf8/U8 nb=20 card=1000 ovl=0%,threshold,361.7,163.1,1904,true,false,69426
+Utf8/U8 nb=20 card=1000 ovl=0%,selective,307.4,17.6,1904,true,false,69426
+Utf8/U8 nb=20 card=1000 ovl=50%,concat,9.6,0.8,1907,true,false,67442
+Utf8/U8 nb=20 card=1000 ovl=50%,dedup,249.0,59.6,1404,true,false,53042
+Utf8/U8 nb=20 card=1000 ovl=50%,threshold,261.5,60.3,1404,true,false,53042
+Utf8/U8 nb=20 card=1000 ovl=50%,selective,226.4,8.1,1404,true,false,53042
+Utf8/U8 nb=20 card=1000 ovl=90%,concat,9.8,0.6,1917,true,false,66674
+Utf8/U8 nb=20 card=1000 ovl=90%,dedup,193.9,13.1,955,true,false,39090
+Utf8/U8 nb=20 card=1000 ovl=90%,threshold,194.3,7.9,955,true,false,39090
+Utf8/U8 nb=20 card=1000 ovl=90%,selective,193.8,5.3,955,true,false,39090
+Utf8/U8 nb=20 card=1000 ovl=100%,concat,9.9,0.6,1890,true,false,65650
+Utf8/U8 nb=20 card=1000 ovl=100%,dedup,162.9,6.2,863,true,false,36274
+Utf8/U8 nb=20 card=1000 ovl=100%,threshold,159.6,5.3,863,true,false,36274
+Utf8/U8 nb=20 card=1000 ovl=100%,selective,157.3,3.1,863,true,false,36274
+Utf8/U8 nb=20 card=5000 ovl=0%,concat,8.9,1.0,1979,true,false,73138
+Utf8/U8 nb=20 card=5000 ovl=0%,dedup,323.5,25.5,1979,true,false,73138
+Utf8/U8 nb=20 card=5000 ovl=0%,threshold,315.8,13.0,1979,true,false,73138
+Utf8/U8 nb=20 card=5000 ovl=0%,selective,341.5,80.1,1979,true,false,73138
+Utf8/U8 nb=20 card=5000 ovl=50%,concat,9.3,1.1,1981,true,false,72050
+Utf8/U8 nb=20 card=5000 ovl=50%,dedup,328.0,95.5,1823,true,false,67186
+Utf8/U8 nb=20 card=5000 ovl=50%,threshold,301.5,8.7,1823,true,false,67186
+Utf8/U8 nb=20 card=5000 ovl=50%,selective,299.8,6.1,1823,true,false,67186
+Utf8/U8 nb=20 card=5000 ovl=90%,concat,8.6,0.4,1980,true,false,70194
+Utf8/U8 nb=20 card=5000 ovl=90%,dedup,246.3,4.6,1689,true,false,61618
+Utf8/U8 nb=20 card=5000 ovl=90%,threshold,250.4,8.9,1689,true,false,61618
+Utf8/U8 nb=20 card=5000 ovl=90%,selective,248.5,7.2,1689,true,false,61618
+Utf8/U8 nb=20 card=5000 ovl=100%,concat,9.3,2.8,1978,true,false,70642
+Utf8/U8 nb=20 card=5000 ovl=100%,dedup,246.2,16.6,1637,true,false,60530
+Utf8/U8 nb=20 card=5000 ovl=100%,threshold,262.8,37.8,1637,true,false,60530
+Utf8/U8 nb=20 card=5000 ovl=100%,selective,242.5,7.8,1637,true,false,60530
+Utf8/U8 nb=50 card=10 ovl=0%,concat,18.2,2.8,500,true,false,41858
+Utf8/U8 nb=50 card=10 ovl=0%,dedup,98.3,3.4,500,true,false,41858
+Utf8/U8 nb=50 card=10 ovl=0%,threshold,98.0,2.6,500,true,false,41858
+Utf8/U8 nb=50 card=10 ovl=0%,selective,107.2,21.0,500,true,false,41858
+Utf8/U8 nb=50 card=10 ovl=50%,concat,20.3,6.1,500,true,false,41346
+Utf8/U8 nb=50 card=10 ovl=50%,dedup,67.8,3.1,255,false,false,28482
+Utf8/U8 nb=50 card=10 ovl=50%,threshold,67.4,2.5,255,false,false,28482
+Utf8/U8 nb=50 card=10 ovl=50%,selective,68.2,3.0,255,false,false,28482
+Utf8/U8 nb=50 card=10 ovl=90%,concat,19.3,0.6,500,true,false,40514
+Utf8/U8 nb=50 card=10 ovl=90%,dedup,42.6,1.4,59,false,false,22786
+Utf8/U8 nb=50 card=10 ovl=90%,threshold,42.7,1.7,59,false,false,22786
+Utf8/U8 nb=50 card=10 ovl=90%,selective,44.6,6.1,59,false,false,22786
+Utf8/U8 nb=50 card=10 ovl=100%,concat,26.2,30.0,500,true,false,40130
+Utf8/U8 nb=50 card=10 ovl=100%,dedup,36.2,3.1,10,false,false,21442
+Utf8/U8 nb=50 card=10 ovl=100%,threshold,34.5,0.4,10,false,false,21442
+Utf8/U8 nb=50 card=10 ovl=100%,selective,35.2,1.0,10,false,false,21442
+Utf8/U8 nb=50 card=100 ovl=0%,concat,19.0,1.0,3194,true,false,122818
+Utf8/U8 nb=50 card=100 ovl=0%,dedup,485.7,76.3,3194,true,false,122818
+Utf8/U8 nb=50 card=100 ovl=0%,threshold,459.3,11.6,3194,true,false,122818
+Utf8/U8 nb=50 card=100 ovl=0%,selective,474.7,36.7,3194,true,false,122818
+Utf8/U8 nb=50 card=100 ovl=50%,concat,18.0,0.5,3164,true,false,117506
+Utf8/U8 nb=50 card=100 ovl=50%,dedup,316.0,59.4,1621,true,false,75586
+Utf8/U8 nb=50 card=100 ovl=50%,threshold,292.4,15.0,1621,true,false,75586
+Utf8/U8 nb=50 card=100 ovl=50%,selective,316.6,52.7,1621,true,false,75586
+Utf8/U8 nb=50 card=100 ovl=90%,concat,19.3,1.9,3191,true,false,116994
+Utf8/U8 nb=50 card=100 ovl=90%,dedup,158.2,10.7,399,true,false,38914
+Utf8/U8 nb=50 card=100 ovl=90%,threshold,160.2,6.5,399,true,false,38914
+Utf8/U8 nb=50 card=100 ovl=90%,selective,167.0,10.6,399,true,false,38914
+Utf8/U8 nb=50 card=100 ovl=100%,concat,20.1,2.2,3160,true,false,117314
+Utf8/U8 nb=50 card=100 ovl=100%,dedup,117.9,3.6,100,false,false,24002
+Utf8/U8 nb=50 card=100 ovl=100%,threshold,118.1,2.8,100,false,false,24002
+Utf8/U8 nb=50 card=100 ovl=100%,selective,137.3,36.3,100,false,false,24002
+Utf8/U8 nb=50 card=256 ovl=0%,concat,21.0,2.2,4123,true,false,151362
+Utf8/U8 nb=50 card=256 ovl=0%,dedup,644.9,6.4,4123,true,false,151362
+Utf8/U8 nb=50 card=256 ovl=0%,threshold,645.3,8.9,4123,true,false,151362
+Utf8/U8 nb=50 card=256 ovl=0%,selective,632.4,9.0,4123,true,false,151362
+Utf8/U8 nb=50 card=256 ovl=50%,concat,20.9,2.5,4176,true,false,149378
+Utf8/U8 nb=50 card=256 ovl=50%,dedup,421.8,7.4,2199,true,false,93122
+Utf8/U8 nb=50 card=256 ovl=50%,threshold,452.6,48.6,2199,true,false,93122
+Utf8/U8 nb=50 card=256 ovl=50%,selective,443.2,61.0,2199,true,false,93122
+Utf8/U8 nb=50 card=256 ovl=90%,concat,28.5,20.8,4143,true,false,147138
+Utf8/U8 nb=50 card=256 ovl=90%,dedup,261.8,45.5,653,true,false,46530
+Utf8/U8 nb=50 card=256 ovl=90%,threshold,235.1,23.0,653,true,false,46530
+Utf8/U8 nb=50 card=256 ovl=90%,selective,225.8,5.8,653,true,false,46530
+Utf8/U8 nb=50 card=256 ovl=100%,concat,21.0,3.6,4188,true,false,148546
+Utf8/U8 nb=50 card=256 ovl=100%,dedup,179.7,9.4,256,false,false,28610
+Utf8/U8 nb=50 card=256 ovl=100%,threshold,190.5,33.3,256,false,false,28610
+Utf8/U8 nb=50 card=256 ovl=100%,selective,178.8,7.0,256,false,false,28610
+Utf8/U8 nb=50 card=1000 ovl=0%,concat,19.9,0.6,4730,true,false,174338
+Utf8/U8 nb=50 card=1000 ovl=0%,dedup,722.5,27.9,4730,true,false,174338
+Utf8/U8 nb=50 card=1000 ovl=0%,threshold,741.0,79.3,4730,true,false,174338
+Utf8/U8 nb=50 card=1000 ovl=0%,selective,758.9,100.5,4730,true,false,174338
+Utf8/U8 nb=50 card=1000 ovl=50%,concat,20.5,1.7,4743,true,false,168322
+Utf8/U8 nb=50 card=1000 ovl=50%,dedup,531.6,63.7,2889,true,false,115202
+Utf8/U8 nb=50 card=1000 ovl=50%,threshold,525.0,53.6,2889,true,false,115202
+Utf8/U8 nb=50 card=1000 ovl=50%,selective,537.5,161.3,2889,true,false,115202
+Utf8/U8 nb=50 card=1000 ovl=90%,concat,23.1,6.5,4760,true,false,164610
+Utf8/U8 nb=50 card=1000 ovl=90%,dedup,327.5,6.4,1367,true,false,67586
+Utf8/U8 nb=50 card=1000 ovl=90%,threshold,364.6,93.8,1367,true,false,67586
+Utf8/U8 nb=50 card=1000 ovl=90%,selective,332.1,15.4,1367,true,false,67586
+Utf8/U8 nb=50 card=1000 ovl=100%,concat,19.8,0.8,4730,true,false,163778
+Utf8/U8 nb=50 card=1000 ovl=100%,dedup,309.5,37.2,996,true,false,56322
+Utf8/U8 nb=50 card=1000 ovl=100%,threshold,299.0,7.0,996,true,false,56322
+Utf8/U8 nb=50 card=1000 ovl=100%,selective,312.9,30.1,996,true,false,56322
+Utf8/U8 nb=50 card=5000 ovl=90%,concat,20.4,2.0,4951,true,false,175554
+Utf8/U8 nb=50 card=5000 ovl=90%,dedup,557.6,46.7,3356,true,false,128194
+Utf8/U8 nb=50 card=5000 ovl=90%,threshold,548.5,23.5,3356,true,false,128194
+Utf8/U8 nb=50 card=5000 ovl=90%,selective,561.6,43.7,3356,true,false,128194
+Utf8/U8 nb=50 card=5000 ovl=100%,concat,21.7,2.0,4948,true,false,175618
+Utf8/U8 nb=50 card=5000 ovl=100%,dedup,567.8,152.6,3142,true,false,121538
+Utf8/U8 nb=50 card=5000 ovl=100%,threshold,532.7,25.3,3142,true,false,121538
+Utf8/U8 nb=50 card=5000 ovl=100%,selective,524.4,7.2,3142,true,false,121538
+Utf8/UInt16 nb=5 card=100 ovl=50%,concat,2.1,0.2,311,false,false,12170
+Utf8/UInt16 nb=5 card=100 ovl=50%,dedup,40.4,32.4,203,false,false,9226
+Utf8/UInt16 nb=5 card=100 ovl=50%,threshold,4.0,0.2,311,false,false,12170
+Utf8/UInt16 nb=5 card=100 ovl=50%,selective,38.4,25.2,203,false,false,9226
+Utf8/UInt16 nb=10 card=256 ovl=90%,concat,4.2,0.4,830,false,false,29826
+Utf8/UInt16 nb=10 card=256 ovl=90%,dedup,62.7,4.8,312,false,false,15170
+Utf8/UInt16 nb=10 card=256 ovl=90%,threshold,4.2,0.2,830,false,false,29826
+Utf8/UInt16 nb=10 card=256 ovl=90%,selective,62.1,3.4,312,false,false,15170
+Utf8/UInt16 nb=20 card=1000 ovl=50%,concat,9.4,0.6,1907,false,false,67442
+Utf8/UInt16 nb=20 card=1000 ovl=50%,dedup,221.0,4.6,1404,false,false,53042
+Utf8/UInt16 nb=20 card=1000 ovl=50%,threshold,8.4,0.5,1907,false,false,67442
+Utf8/UInt16 nb=20 card=1000 ovl=50%,selective,300.9,100.6,1404,false,false,53042
+Utf8/UInt16 nb=5 card=256 ovl=0%,concat,2.2,0.1,420,false,false,15562
+Utf8/UInt16 nb=5 card=256 ovl=0%,dedup,58.7,6.3,420,false,false,15562
+Utf8/UInt16 nb=5 card=256 ovl=0%,threshold,2.2,0.1,420,false,false,15562
+Utf8/UInt16 nb=5 card=256 ovl=0%,selective,57.1,3.2,420,false,false,15562
+Utf8/UInt16 nb=10 card=100 ovl=100%,concat,4.1,0.3,633,false,false,24130
+Utf8/UInt16 nb=10 card=100 ovl=100%,dedup,30.3,1.4,100,false,false,8962
+Utf8/UInt16 nb=10 card=100 ovl=100%,threshold,4.1,0.2,633,false,false,24130
+Utf8/UInt16 nb=10 card=100 ovl=100%,selective,29.1,0.6,100,false,false,8962
+FSB16/UInt8 nb=5 card=100 ovl=50%,concat,2.8,0.2,316,true,false,8450
+FSB16/UInt8 nb=5 card=100 ovl=50%,dedup,48.6,2.6,212,false,false,6146
+FSB16/UInt8 nb=5 card=100 ovl=50%,threshold,47.5,1.9,212,false,false,6146
+FSB16/UInt8 nb=5 card=100 ovl=50%,selective,47.7,0.9,212,false,false,6146
+FSB16/UInt8 nb=10 card=256 ovl=90%,concat,5.2,0.4,851,true,false,19770
+FSB16/UInt8 nb=10 card=256 ovl=90%,dedup,80.2,3.5,308,true,false,11002
+FSB16/UInt8 nb=10 card=256 ovl=90%,threshold,85.8,8.0,308,true,false,11002
+FSB16/UInt8 nb=10 card=256 ovl=90%,selective,79.8,2.6,308,true,false,11002
+FSB16/UInt8 nb=20 card=1000 ovl=50%,concat,10.1,0.6,1919,true,false,42346
+FSB16/UInt8 nb=20 card=1000 ovl=50%,dedup,291.4,10.5,1402,true,false,34026
+FSB16/UInt8 nb=20 card=1000 ovl=50%,threshold,291.7,10.1,1402,true,false,34026
+FSB16/UInt8 nb=20 card=1000 ovl=50%,selective,290.0,4.3,1402,true,false,34026
+FSB16/UInt8 nb=5 card=256 ovl=0%,concat,2.7,0.2,410,true,false,9986
+FSB16/UInt8 nb=5 card=256 ovl=0%,dedup,80.9,3.9,410,true,false,9986
+FSB16/UInt8 nb=5 card=256 ovl=0%,threshold,79.7,2.6,410,true,false,9986
+FSB16/UInt8 nb=5 card=256 ovl=0%,selective,80.2,1.9,410,true,false,9986
+FSB16/UInt8 nb=10 card=100 ovl=100%,concat,5.7,0.7,640,true,false,16378
+FSB16/UInt8 nb=10 card=100 ovl=100%,dedup,37.6,3.2,100,false,false,6394
+FSB16/UInt8 nb=10 card=100 ovl=100%,threshold,36.2,0.7,100,false,false,6394
+FSB16/UInt8 nb=10 card=100 ovl=100%,selective,37.4,2.2,100,false,false,6394
+FSB16/UInt16 nb=5 card=100 ovl=50%,concat,2.7,0.5,316,false,false,8450
+FSB16/UInt16 nb=5 card=100 ovl=50%,dedup,47.2,1.8,212,false,false,6786
+FSB16/UInt16 nb=5 card=100 ovl=50%,threshold,2.5,0.2,316,false,false,8450
+FSB16/UInt16 nb=5 card=100 ovl=50%,selective,47.4,0.3,212,false,false,6786
+FSB16/UInt16 nb=10 card=256 ovl=90%,concat,4.9,0.4,851,false,false,19770
+FSB16/UInt16 nb=10 card=256 ovl=90%,dedup,78.1,0.5,308,false,false,11002
+FSB16/UInt16 nb=10 card=256 ovl=90%,threshold,5.0,0.4,851,false,false,19770
+FSB16/UInt16 nb=10 card=256 ovl=90%,selective,80.0,2.0,308,false,false,11002
+FSB16/UInt16 nb=20 card=1000 ovl=50%,concat,10.1,0.5,1919,false,false,42346
+FSB16/UInt16 nb=20 card=1000 ovl=50%,dedup,296.7,22.7,1402,false,false,34026
+FSB16/UInt16 nb=20 card=1000 ovl=50%,threshold,11.0,2.3,1919,false,false,42346
+FSB16/UInt16 nb=20 card=1000 ovl=50%,selective,299.8,22.0,1402,false,false,34026
+FSB16/UInt16 nb=5 card=256 ovl=0%,concat,2.7,0.3,410,false,false,9986
+FSB16/UInt16 nb=5 card=256 ovl=0%,dedup,85.9,20.5,410,false,false,9986
+FSB16/UInt16 nb=5 card=256 ovl=0%,threshold,2.7,0.2,410,false,false,9986
+FSB16/UInt16 nb=5 card=256 ovl=0%,selective,79.0,0.3,410,false,false,9986
+FSB16/UInt16 nb=10 card=100 ovl=100%,concat,4.9,0.4,640,false,false,16378
+FSB16/UInt16 nb=10 card=100 ovl=100%,dedup,42.6,14.6,100,false,false,7674
+FSB16/UInt16 nb=10 card=100 ovl=100%,threshold,4.9,0.3,640,false,false,16378
+FSB16/UInt16 nb=10 card=100 ovl=100%,selective,39.3,7.3,100,false,false,7674
+Int32/UInt8 nb=5 card=100 ovl=50%,concat,2.1,0.1,307,true,false,4690
+Int32/UInt8 nb=5 card=100 ovl=50%,dedup,27.0,3.4,195,false,false,3602
+Int32/UInt8 nb=5 card=100 ovl=50%,threshold,26.3,0.2,195,false,false,3602
+Int32/UInt8 nb=5 card=100 ovl=50%,selective,26.6,1.7,195,false,false,3602
+Int32/UInt8 nb=10 card=256 ovl=90%,concat,3.8,0.3,836,true,false,9546
+Int32/UInt8 nb=10 card=256 ovl=90%,dedup,50.8,0.7,311,true,false,7370
+Int32/UInt8 nb=10 card=256 ovl=90%,threshold,50.7,2.0,311,true,false,7370
+Int32/UInt8 nb=10 card=256 ovl=90%,selective,51.2,3.4,311,true,false,7370
+Int32/UInt8 nb=20 card=1000 ovl=50%,concat,7.7,0.3,1903,true,false,19258
+Int32/UInt8 nb=20 card=1000 ovl=50%,dedup,167.8,5.4,1377,true,false,17146
+Int32/UInt8 nb=20 card=1000 ovl=50%,threshold,184.3,37.2,1377,true,false,17146
+Int32/UInt8 nb=20 card=1000 ovl=50%,selective,172.8,10.8,1377,true,false,17146
+Int32/UInt8 nb=5 card=256 ovl=0%,concat,2.1,0.2,414,true,false,5074
+Int32/UInt8 nb=5 card=256 ovl=0%,dedup,44.8,3.2,414,true,false,5074
+Int32/UInt8 nb=5 card=256 ovl=0%,threshold,44.7,1.6,414,true,false,5074
+Int32/UInt8 nb=5 card=256 ovl=0%,selective,44.6,2.1,414,true,false,5074
+Int32/UInt8 nb=10 card=100 ovl=100%,concat,3.9,0.5,632,true,false,8714
+Int32/UInt8 nb=10 card=100 ovl=100%,dedup,25.7,0.8,100,false,false,5258
+Int32/UInt8 nb=10 card=100 ovl=100%,threshold,25.7,1.3,100,false,false,5258
+Int32/UInt8 nb=10 card=100 ovl=100%,selective,25.9,1.2,100,false,false,5258
+Int32/UInt16 nb=5 card=100 ovl=50%,concat,1.8,0.1,307,false,false,4690
+Int32/UInt16 nb=5 card=100 ovl=50%,dedup,26.9,1.9,195,false,false,4242
+Int32/UInt16 nb=5 card=100 ovl=50%,threshold,1.8,0.1,307,false,false,4690
+Int32/UInt16 nb=5 card=100 ovl=50%,selective,26.7,1.1,195,false,false,4242
+Int32/UInt16 nb=10 card=256 ovl=90%,concat,3.8,0.6,836,false,false,9546
+Int32/UInt16 nb=10 card=256 ovl=90%,dedup,52.5,3.7,311,false,false,7370
+Int32/UInt16 nb=10 card=256 ovl=90%,threshold,3.6,0.3,836,false,false,9546
+Int32/UInt16 nb=10 card=256 ovl=90%,selective,91.0,80.7,311,false,false,7370
+Int32/UInt16 nb=20 card=1000 ovl=50%,concat,9.2,6.4,1903,false,false,19258
+Int32/UInt16 nb=20 card=1000 ovl=50%,dedup,197.9,46.3,1377,false,false,17146
+Int32/UInt16 nb=20 card=1000 ovl=50%,threshold,7.6,0.3,1903,false,false,19258
+Int32/UInt16 nb=20 card=1000 ovl=50%,selective,173.3,9.3,1377,false,false,17146
+Int32/UInt16 nb=5 card=256 ovl=0%,concat,1.9,0.1,414,false,false,5074
+Int32/UInt16 nb=5 card=256 ovl=0%,dedup,47.7,10.5,414,false,false,5074
+Int32/UInt16 nb=5 card=256 ovl=0%,threshold,1.9,0.1,414,false,false,5074
+Int32/UInt16 nb=5 card=256 ovl=0%,selective,44.6,1.8,414,false,false,5074
+Int32/UInt16 nb=10 card=100 ovl=100%,concat,5.3,2.5,632,false,false,8714
+Int32/UInt16 nb=10 card=100 ovl=100%,dedup,30.6,1.1,100,false,false,6538
+Int32/UInt16 nb=10 card=100 ovl=100%,threshold,4.5,1.1,632,false,false,8714
+Int32/UInt16 nb=10 card=100 ovl=100%,selective,31.3,1.5,100,false,false,6538
+OTAP-Logs nb=5 rows=100,concat,26.0,9.6,1105,false,false,41226
+OTAP-Logs nb=5 rows=100,dedup,257.1,32.0,1025,false,false,40330
+OTAP-Logs nb=5 rows=100,threshold,17.9,1.8,1105,false,false,41226
+OTAP-Logs nb=5 rows=100,selective,247.3,34.2,1025,false,false,40330
+OTAP-Logs nb=10 rows=100,concat,33.1,7.5,2210,false,false,78658
+OTAP-Logs nb=10 rows=100,dedup,428.3,7.2,2030,false,false,76738
+OTAP-Logs nb=10 rows=100,threshold,28.9,1.0,2210,false,false,78658
+OTAP-Logs nb=10 rows=100,selective,438.9,16.9,2030,false,false,76738
+OTAP-Logs nb=5 rows=500,concat,33.2,3.4,5105,false,false,153098
+OTAP-Logs nb=5 rows=500,dedup,973.8,39.6,5025,false,false,152202
+OTAP-Logs nb=5 rows=500,threshold,35.1,5.5,5105,false,false,153098
+OTAP-Logs nb=5 rows=500,selective,43.4,1.6,5025,false,false,152202
+OTAP-Logs nb=10 rows=500,concat,61.4,1.8,10210,false,false,302402
+OTAP-Logs nb=10 rows=500,dedup,2105.6,212.0,10030,false,false,300482
+OTAP-Logs nb=10 rows=500,threshold,62.5,3.3,10210,false,false,302402
+OTAP-Logs nb=10 rows=500,selective,87.3,14.5,10030,false,false,300482
+OTAP-Logs nb=5 rows=1000,concat,53.5,2.4,10105,false,false,296906
+OTAP-Logs nb=5 rows=1000,dedup,2018.9,73.3,10025,false,false,296010
+OTAP-Logs nb=5 rows=1000,threshold,53.8,1.4,10105,false,false,296906
+OTAP-Logs nb=5 rows=1000,selective,71.4,3.9,10025,false,false,296010
+OTAP-Logs nb=10 rows=1000,concat,110.9,12.9,20210,false,false,590082
+OTAP-Logs nb=10 rows=1000,dedup,3996.1,110.2,20030,false,false,588162
+OTAP-Logs nb=10 rows=1000,threshold,107.5,11.6,20210,false,false,590082
+OTAP-Logs nb=10 rows=1000,selective,136.8,10.8,20030,false,false,588162
+OTAP-Logs nb=20 rows=1000,concat,216.1,12.4,40420,false,false,1176562
+OTAP-Logs nb=20 rows=1000,dedup,9037.9,722.0,40040,false,false,1172338
+OTAP-Logs nb=20 rows=1000,threshold,211.1,7.2,40420,false,false,1176562
+OTAP-Logs nb=20 rows=1000,selective,275.9,23.1,40040,false,false,1172338
+OTAP-Logs nb=5 rows=2000,concat,98.7,4.5,20105,false,false,584586
+OTAP-Logs nb=5 rows=2000,dedup,3968.2,87.2,20025,false,false,583690
+OTAP-Logs nb=5 rows=2000,threshold,98.2,4.1,20105,false,false,584586
+OTAP-Logs nb=5 rows=2000,selective,125.7,2.9,20025,false,false,583690
+OTAP-Logs nb=10 rows=2000,concat,207.1,10.6,40210,false,false,1165442
+OTAP-Logs nb=10 rows=2000,dedup,8752.2,745.5,40030,false,false,1163522
+OTAP-Logs nb=10 rows=2000,threshold,204.4,21.0,40210,false,false,1165442
+OTAP-Logs nb=10 rows=2000,selective,257.2,12.5,40030,false,false,1163522
+OTAP-Logs nb=5 rows=5000,concat,275.8,67.8,50105,false,false,1448138
+OTAP-Logs nb=5 rows=5000,dedup,10654.8,538.6,50025,false,false,1447242
+OTAP-Logs nb=5 rows=5000,threshold,265.1,14.5,50105,false,false,1448138
+OTAP-Logs nb=5 rows=5000,selective,372.6,53.8,50025,false,false,1447242
+OTAP-Logs nb=10 rows=5000,concat,699.7,119.9,100210,false,false,2892546
+OTAP-Logs nb=10 rows=5000,dedup,25712.6,2716.1,100030,false,false,2890626
+OTAP-Logs nb=10 rows=5000,threshold,537.3,56.1,100210,false,false,2892546
+OTAP-Logs nb=10 rows=5000,selective,623.2,14.1,100030,false,false,2890626
+OTAP-Logs nb=5 rows=8192,concat,407.3,11.0,82025,false,false,2363146
+OTAP-Logs nb=5 rows=8192,dedup,20138.3,1133.2,81945,false,false,2362250
+OTAP-Logs nb=5 rows=8192,threshold,406.3,21.2,82025,false,false,2363146
+OTAP-Logs nb=5 rows=8192,selective,486.8,18.8,81945,false,false,2362250
+OTAP-Logs nb=10 rows=8192,concat,687.2,104.5,164050,false,true,4373866
+OTAP-Logs nb=10 rows=8192,dedup,42250.8,2161.8,163870,false,true,4371946
+OTAP-Logs nb=10 rows=8192,threshold,42524.4,1699.5,164050,false,true,4373866
+OTAP-Logs nb=10 rows=8192,selective,862.6,93.4,163870,false,true,4371946
+OTAP-Logs nb=8 rows=8192,concat,748.6,112.4,131240,false,false,3778770
+OTAP-Logs nb=8 rows=8192,dedup,34525.9,2011.0,131100,false,false,3777298
+OTAP-Logs nb=8 rows=8192,threshold,657.1,32.4,131240,false,false,3778770
+OTAP-Logs nb=8 rows=8192,selective,831.1,116.3,131100,false,false,3777298
+OTAP-Logs nb=100 rows=1000,concat,1157.3,343.1,202100,true,true,5739738
+OTAP-Logs nb=100 rows=1000,dedup,53683.9,2269.3,200120,false,true,5410458
+OTAP-Logs nb=100 rows=1000,threshold,52934.7,1920.5,200219,false,true,5414682
+OTAP-Logs nb=100 rows=1000,selective,1410.3,71.9,200120,false,true,5410458
+OTAP-Logs nb=500 rows=100,concat,1641.0,306.7,110500,true,false,4012210
+OTAP-Logs nb=500 rows=100,dedup,29716.6,2119.9,100520,true,false,3708338
+OTAP-Logs nb=500 rows=100,threshold,2365.9,412.9,100520,true,false,3708338
+OTAP-Logs nb=500 rows=100,selective,29746.2,2011.3,100520,true,false,3708338
+OTAP-Logs nb=500 rows=1000,concat,8630.7,1167.6,1010500,true,true,29199130
+OTAP-Logs nb=500 rows=1000,dedup,380100.8,16834.7,1000520,true,true,27551258
+OTAP-Logs nb=500 rows=1000,threshold,384620.9,16275.3,1000520,true,true,27551258
+OTAP-Logs nb=500 rows=1000,selective,8441.9,509.0,1000520,true,true,27551258
+OTAP-Metrics nb=10 rows=500 metrics=50,concat,48.8,2.2,1180,true,false,99866
+OTAP-Metrics nb=10 rows=500 metrics=50,dedup,100.1,4.3,118,false,false,58842
+OTAP-Metrics nb=10 rows=500 metrics=50,threshold,85.6,3.1,280,false,false,60442
+OTAP-Metrics nb=10 rows=500 metrics=50,selective,99.9,3.3,118,false,false,58842
+OTAP-Metrics nb=10 rows=500 metrics=200,concat,51.0,4.8,3840,true,false,188762
+OTAP-Metrics nb=10 rows=500 metrics=200,dedup,198.7,8.8,418,false,false,68762
+OTAP-Metrics nb=10 rows=500 metrics=200,threshold,190.3,6.3,580,false,false,70362
+OTAP-Metrics nb=10 rows=500 metrics=200,selective,199.4,5.3,418,false,false,68762
+OTAP-Metrics nb=100 rows=500 metrics=50,concat,458.0,25.7,11800,true,false,1020490
+OTAP-Metrics nb=100 rows=500 metrics=50,dedup,853.5,17.5,118,false,false,527562
+OTAP-Metrics nb=100 rows=500 metrics=50,threshold,807.9,27.7,415,false,false,532554
+OTAP-Metrics nb=100 rows=500 metrics=50,selective,874.6,41.4,118,false,false,527562
+OTAP-Metrics nb=100 rows=500 metrics=200,concat,502.3,50.3,38684,true,false,1918858
+OTAP-Metrics nb=100 rows=500 metrics=200,dedup,1612.1,135.4,418,false,false,537482
+OTAP-Metrics nb=100 rows=500 metrics=200,threshold,1627.2,178.8,715,false,false,542474
+OTAP-Metrics nb=100 rows=500 metrics=200,selective,1927.5,498.4,418,false,false,537482
+OTAP-Metrics nb=500 rows=100 metrics=50,concat,1101.2,105.1,52276,true,false,2888074
+OTAP-Metrics nb=500 rows=100 metrics=50,dedup,3043.0,620.6,118,false,false,1074762
+OTAP-Metrics nb=500 rows=100 metrics=50,threshold,2731.8,351.4,118,false,false,1074762
+OTAP-Metrics nb=500 rows=100 metrics=50,selective,2768.8,282.2,118,false,false,1074762
+OTAP-Metrics nb=500 rows=500 metrics=50,concat,2819.5,281.5,58994,true,false,5602186
+OTAP-Metrics nb=500 rows=500 metrics=50,dedup,5005.1,451.1,118,false,false,2610762
+OTAP-Metrics nb=500 rows=500 metrics=50,threshold,5164.6,459.6,118,false,false,2610762
+OTAP-Metrics nb=500 rows=500 metrics=50,selective,4743.9,335.5,118,false,false,2610762
+OTAP-Metrics nb=500 rows=500 metrics=200,concat,4915.5,572.0,192740,true,true,19555466
+OTAP-Metrics nb=500 rows=500 metrics=200,dedup,8980.1,555.8,418,false,false,2620682
+OTAP-Metrics nb=500 rows=500 metrics=200,threshold,9090.7,661.2,418,false,false,2620682
+OTAP-Metrics nb=500 rows=500 metrics=200,selective,9054.3,572.6,418,false,false,2620682
+OTAP-Traces nb=10 rows=500 spans=50,concat,51.0,4.6,5690,true,false,328666
+OTAP-Traces nb=10 rows=500 spans=50,dedup,1385.8,148.1,5114,false,false,310874
+OTAP-Traces nb=10 rows=500 spans=50,threshold,66.3,3.0,5240,false,false,312538
+OTAP-Traces nb=10 rows=500 spans=50,selective,86.1,2.6,5114,false,false,310874
+OTAP-Traces nb=10 rows=500 spans=200,concat,53.1,12.4,7027,true,false,362970
+OTAP-Traces nb=10 rows=500 spans=200,dedup,1375.3,44.6,5264,false,false,314714
+OTAP-Traces nb=10 rows=500 spans=200,threshold,116.1,3.7,5390,false,false,316378
+OTAP-Traces nb=10 rows=500 spans=200,selective,141.6,10.3,5264,false,false,314714
+OTAP-Traces nb=100 rows=500 spans=50,concat,539.2,86.1,56900,true,false,3358794
+OTAP-Traces nb=100 rows=500 spans=50,dedup,15739.2,1023.8,50562,true,false,3116810
+OTAP-Traces nb=100 rows=500 spans=50,threshold,869.3,56.7,50663,true,false,3121034
+OTAP-Traces nb=100 rows=500 spans=50,selective,891.1,63.8,50564,true,false,3116810
+OTAP-Traces nb=100 rows=500 spans=200,concat,525.6,33.9,70215,true,false,3699850
+OTAP-Traces nb=100 rows=500 spans=200,dedup,16787.3,758.6,50712,true,false,3120650
+OTAP-Traces nb=100 rows=500 spans=200,threshold,1268.6,106.8,50813,true,false,3124874
+OTAP-Traces nb=100 rows=500 spans=200,selective,1310.5,156.9,50714,true,false,3120650
+OTAP-Traces nb=500 rows=100 spans=50,concat,1116.6,228.0,80789,true,false,4604682
+OTAP-Traces nb=500 rows=100 spans=50,dedup,21346.7,945.3,52236,true,false,3792202
+OTAP-Traces nb=500 rows=100 spans=50,threshold,3619.7,494.2,52238,true,false,3792202
+OTAP-Traces nb=500 rows=100 spans=50,selective,20462.5,906.0,52236,true,false,3792202
+OTAP-Traces nb=500 rows=500 spans=50,concat,4277.3,770.2,284499,true,true,16511642
+OTAP-Traces nb=500 rows=500 spans=50,dedup,136321.9,8101.0,252495,true,true,15039706
+OTAP-Traces nb=500 rows=500 spans=50,threshold,123903.9,10860.9,252495,true,true,15039706
+OTAP-Traces nb=500 rows=500 spans=50,selective,6143.6,751.8,252564,true,true,15039706
